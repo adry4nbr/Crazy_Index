@@ -78,13 +78,18 @@ export const mockRacas: Raca[] = [
     id: "raca_vampiro",
     nome: "Vampiro",
     origem: "Maldição",
-    idade_media: "500 Anos(Mas alguns podem ser Imortal)",
+    idade_media: "500+",
     descricao:
       "Criaturas da noite que se alimentam de essência vital (sangue). Possuem velocidade e regeneração aprimoradas, mas são severamente punidos pela luz solar.",
     aliancas_ids: ["raca_tritao"],
     inimigos_ids: ["raca_lobisomem"],
     categoria: ["Terrestre", "Mágico"],
-    regioes_ids: ["regiao_medieval", "regiao_submundo"], // Vive tanto no feudo medieval quanto no submundo
+    regioes_ids: [
+      "regiao_medieval",
+      "regiao_submundo",
+      "regiao_medieval",
+      "regiao_submundo",
+    ], // Vive tanto no feudo medieval quanto no submundo
     fraquezas: {
       Físicas:
         "Decapitação, estaca de madeira pura no coração e exposição extrema ao Sol.",

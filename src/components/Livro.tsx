@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { mockRacas } from "@/data/mockData";
 
+type RacaType = (typeof mockRacas)[number];
+
 export default function Livro() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -17,198 +19,437 @@ export default function Livro() {
     if (currentPage - 2 >= 0) setCurrentPage(currentPage - 2);
   };
 
-  // Função mágica para pegar o nome da raça através do ID
   const getNomeRaca = (id: string) => {
     const raca = mockRacas.find((r) => r.id === id);
     return raca ? raca.nome : "Desconhecida";
   };
 
-  // 📖 CAPA DO GRIMÓRIO (Estilo Necronomicon)
+  const getNomeRegiao = (id: string) => {
+    return id;
+  };
+
+  // ── CAPA DO GRIMÓRIO ──
   if (!isOpen) {
     return (
-      <div
-        onClick={() => setIsOpen(true)}
-        className="w-95 h-137.5 bg-[#2a1e1a] border-4 border-[#1c120f] rounded-r-3xl shadow-[20px_20px_30px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center cursor-pointer transform hover:rotate-y-6 transition-all duration-700 hover:scale-105 select-none relative group"
-        style={{ perspective: "1200px" }}
-      >
-        {/* Textura de couro velho / costura */}
-        <div className="absolute inset-2 border-2 border-dashed border-[#4a3525] opacity-50 rounded-r-2xl pointer-events-none" />
-        <div className="absolute left-4 top-0 bottom-0 w-8 bg-[#1c120f] opacity-80 shadow-[5px_0_15px_rgba(0,0,0,0.9)]" />
+      <>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital,wght@0,400;1,400&display=swap');
 
-        <h1 className="text-[#a42b2b] font-serif text-5xl font-extrabold tracking-widest text-center px-8 drop-shadow-[0_5px_5px_rgba(0,0,0,1)] z-10 opacity-90">
-          CRAZY INDEX
-        </h1>
-        <p className="text-[#8c7462] font-serif text-sm mt-6 tracking-[0.3em] uppercase z-10">
-          Tomo I: Bestiário
-        </p>
+          /* Estilos específicos da Capa do Grimório Arcano */
+          .grimorio-cover {
+            width: 340px;
+            height: 500px;
+            background: #1a0e0a;
+            border-radius: 4px 18px 18px 4px;
+            border: 3px solid #0d0806;
+            box-shadow: 12px 12px 40px rgba(0,0,0,0.9), inset 0 0 60px rgba(0,0,0,0.7);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+          }
+          .grimorio-cover:hover { 
+            transform: scale(1.02) rotate(-1deg); 
+            box-shadow: 18px 18px 50px rgba(0,0,0,0.95); 
+          }
+          .cover-spine {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 28px;
+            background: #0d0806;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.8);
+            border-right: 1px solid #2a1a12;
+          }
+          .cover-inner-border {
+            position: absolute; inset: 14px 10px 14px 38px;
+            border: 1px solid #3a2518;
+            border-radius: 2px 12px 12px 2px;
+            pointer-events: none;
+          }
+          .cover-inner-border2 {
+            position: absolute; inset: 20px 16px 20px 44px;
+            border: 1px dashed #2e1c10;
+            border-radius: 1px 10px 10px 1px;
+            pointer-events: none;
+          }
+          .cover-title {
+            position: absolute; top: 80px; left: 50px; right: 20px;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 34px;
+            font-weight: 700;
+            color: #8b2020;
+            text-shadow: 0 0 20px rgba(139,32,32,0.6), 0 2px 4px rgba(0,0,0,1);
+            letter-spacing: 6px;
+            line-height: 1.2;
+          }
+          .cover-subtitle {
+            position: absolute; top: 178px; left: 50px; right: 20px;
+            text-align: center;
+            font-family: 'IM Fell English', serif;
+            font-size: 12px;
+            color: #5a3e2e;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+          }
+          .cover-sigil {
+            position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+            font-size: 64px; color: #8b2020; opacity: 0.18;
+            line-height: 1;
+          }
+          .cover-sigil2 {
+            position: absolute; bottom: 108px; left: 50%; transform: translateX(-50%);
+            font-size: 48px; color: #5a3020; opacity: 0.12;
+            line-height: 1;
+          }
+          .cover-hint {
+            position: absolute; bottom: 24px; left: 50px; right: 20px;
+            text-align: center;
+            font-family: 'IM Fell English', serif;
+            font-size: 10px;
+            color: #3a2518;
+            font-style: italic;
+            animation: pulse-text 3s ease-in-out infinite;
+          }
+          @keyframes pulse-text { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+          .cover-ornament {
+            position: absolute;
+            color: #2e1c10;
+            font-size: 18px;
+            opacity: 0.6;
+          }
+        `}</style>
 
-        {/* Adorno místico (pentagrama/símbolo simples) */}
-        <div className="absolute bottom-16 text-[#a42b2b] text-5xl opacity-20 group-hover:opacity-40 transition-opacity">
-          ⛤
+        <div className="flex justify-center items-center py-8">
+          <div
+            className="grimorio-cover select-none"
+            onClick={() => setIsOpen(true)}
+          >
+            <div className="cover-spine" />
+            <div className="cover-inner-border" />
+            <div className="cover-inner-border2" />
+
+            <div
+              className="cover-ornament"
+              style={{ top: "40px", left: "44px", fontSize: "14px" }}
+            >
+              ✦
+            </div>
+            <div
+              className="cover-ornament"
+              style={{ top: "40px", right: "14px", fontSize: "14px" }}
+            >
+              ✦
+            </div>
+            <div
+              className="cover-ornament"
+              style={{ bottom: "42px", left: "44px", fontSize: "14px" }}
+            >
+              ✦
+            </div>
+            <div
+              className="cover-ornament"
+              style={{ bottom: "42px", right: "14px", fontSize: "14px" }}
+            >
+              ✦
+            </div>
+
+            <div className="cover-title">
+              CRAZY
+              <br />
+              INDEX
+            </div>
+            <div className="cover-subtitle">Tomo I · Bestiário</div>
+
+            <div
+              style={{
+                position: "absolute",
+                top: "220px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "120px",
+                height: "1px",
+                background:
+                  "linear-gradient(to right,transparent,#3a2518,transparent)",
+              }}
+            />
+
+            <div className="cover-sigil2">☽</div>
+            <div className="cover-sigil">⛤</div>
+
+            <div
+              style={{
+                position: "absolute",
+                bottom: "80px",
+                left: "44px",
+                right: "14px",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "'Cinzel', serif",
+                  fontSize: "8px",
+                  color: "#2e1a0e",
+                  letterSpacing: "2px",
+                  opacity: 0.5,
+                }}
+              >
+                ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ
+              </div>
+            </div>
+
+            <div className="cover-hint">
+              Ouse abrir o conhecimento proibido...
+            </div>
+          </div>
         </div>
-
-        <span className="absolute bottom-6 text-[#8c7462] text-xs animate-pulse opacity-60">
-          Ouse abrir o conhecimento proibido...
-        </span>
-      </div>
+      </>
     );
   }
 
   const racaEsquerda = mockRacas[currentPage];
   const racaDireita = mockRacas[currentPage + 1];
 
-  // 📖 FUNÇÃO PARA RENDERIZAR UMA PÁGINA INTERNA COM OS DADOS
+  // ── RENDERIZADOR DE PÁGINA ──
   const renderizarPagina = (
-    raca: typeof racaEsquerda,
-    numeroPagina: number,
+    raca: RacaType | undefined,
+    pageNum: number,
+    side: "left" | "right",
   ) => {
+    const isLeft = side === "left";
+
     if (!raca) {
       return (
-        <div className="flex flex-col items-center justify-center h-full text-[#7a6452] opacity-40 font-serif text-xl italic">
-          As páginas seguintes foram arrancadas...
+        <div className="flex flex-col items-center justify-center h-full text-[#4a331e] opacity-40 font-['IM_Fell_English'] text-xl italic text-center p-12">
+          As páginas seguintes foram arrancadas ou consumidas pelo tempo...
         </div>
       );
     }
 
-    return (
-      <div className="h-full flex flex-col">
-        {/* Título e Origem */}
-        <div className="text-center mb-4">
-          <span className="text-[10px] uppercase tracking-widest text-[#6e5440] font-bold">
-            ~ Origem: {raca.origem} ~
-          </span>
-          <h2
-            className="text-3xl font-extrabold text-[#3d2b1f] font-serif mt-1 drop-shadow-sm"
-            style={{ fontFamily: "Georgia, serif" }}
-          >
-            {raca.nome}
-          </h2>
-        </div>
+    const fraquezas = (raca.fraquezas as Record<string, string>) || {};
 
-        {/* 🪄 NOVO LAYOUT: Imagem e Descrição lado a lado */}
-        <div className="flex gap-4 mb-4">
-          {/* Imagem (Largura reduzida) */}
-          <div className="w-28 h-36 border border-[#7a6452] border-dashed rounded bg-[#3d2b1f]/5 flex flex-col items-center justify-center shrink-0">
-            <span className="text-2xl opacity-40">🖋️</span>
-            <span className="text-[10px] text-[#7a6452] font-serif italic text-center px-2">
-              Gravura de {raca.nome}
+    return (
+      <div className="h-full flex flex-col font-['IM_Fell_English'] relative z-10 select-none pb-8">
+        {/* Manchas de envelhecimento orgânico */}
+        <div
+          className={`absolute ${isLeft ? "top-2 left-4" : "bottom-12 right-4"} w-72 h-56 bg-radial-[rgba(65,35,10,0.35)_0%,transparent_70%] pointer-events-none mix-blend-multiply z-0`}
+        />
+        <div
+          className={`absolute ${isLeft ? "bottom-20 right-6" : "top-6 left-12"} w-44 h-36 bg-radial-[rgba(55,25,5,0.45)_0%,transparent_60%] pointer-events-none mix-blend-multiply z-0`}
+        />
+        <div
+          className={`absolute ${isLeft ? "top-1/3 right-2" : "bottom-1/3 left-6"} w-32 h-24 bg-radial-[rgba(45,15,5,0.40)_0%,transparent_65%] pointer-events-none mix-blend-multiply z-0`}
+        />
+
+        <div className="relative z-10 flex flex-col h-full justify-start">
+          {/* Cabeçalho */}
+          <header className="text-center shrink-0">
+            <span className="text-[12px] uppercase tracking-[3px] text-[#4a321a] font-bold block">
+              ~ Origem: {raca.origem || "Sem Dados"} ~
             </span>
+            <h2 className="font-['Cinzel'] text-3xl font-extrabold text-[#210f05] tracking-wide leading-tight mt-0.5">
+              {raca.nome}
+            </h2>
+            <div className="w-full h-px bg-linear-to-r from-transparent via-[#4a321a]/40 to-transparent relative my-2">
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-[#4a321a] bg-[#cdb394] px-2">
+                ✧
+              </span>
+            </div>
+          </header>
+
+          {/* Imagem e Descrição */}
+          <div className="flex gap-4 items-start mt-1 shrink-0">
+            <div className="w-32 h-38 shrink-0 border border-[#4a321a]/70 bg-stone-950/15 relative flex flex-col items-center justify-center rounded shadow-xs">
+              <div className="absolute inset-0.5 border border-[#4a321a]/20 border-dashed" />
+              <span className="text-[10px] tracking-widest font-bold text-[#4a321a]/80 uppercase font-['Cinzel']">
+                Gravura
+              </span>
+            </div>
+
+            <p className="flex-1 text-[14.5px] leading-relaxed text-[#170a03] italic text-justify">
+              {raca.descricao ||
+                "Nenhum relato escrito foi encontrado sobre esta criatura nos arquivos antigos."}
+            </p>
           </div>
 
-          {/* Descrição ao lado */}
-          <p className="flex-1 text-sm leading-relaxed text-[#2c1e16] font-serif italic overflow-y-auto max-h-36 pr-1 custom-scrollbar">
-            {raca.descricao}
-          </p>
+          <div className="w-full h-px bg-[#4a321a]/25 my-3 shrink-0" />
+
+          {/* Informações Técnicas Divididas em 2 Colunas */}
+          <div className="flex gap-2 text-[14.5px] text-[#170a03] shrink-0 items-start">
+            {/* Coluna da Esquerda (Informações Gerais) */}
+            <div className="flex-1 space-y-2">
+              <p className="leading-tight">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
+                  Longevidade:
+                </span>
+                <span className="font-bold">
+                  {raca.idade_media || "Sem Dados"}
+                </span>
+              </p>
+
+              <p className="leading-tight flex flex-wrap items-center gap-1.5">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1">
+                  Alianças:
+                </span>
+                {raca.aliancas_ids && raca.aliancas_ids.length > 0 ? (
+                  raca.aliancas_ids.map((id) => (
+                    <span
+                      key={id}
+                      className="px-2 py-0.5 border border-blue-900/30 bg-blue-950/10 text-blue-950 text-[12px] font-bold rounded-xs shadow-2xs"
+                    >
+                      {getNomeRaca(id)}
+                    </span>
+                  ))
+                ) : (
+                  <span className="italic text-[#4a321a]/80 font-medium">
+                    Sem Dados
+                  </span>
+                )}
+              </p>
+
+              <p className="leading-tight flex flex-wrap items-center gap-1.5">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1">
+                  Inimigos:
+                </span>
+                {raca.inimigos_ids && raca.inimigos_ids.length > 0 ? (
+                  raca.inimigos_ids.map((id) => (
+                    <span
+                      key={id}
+                      className="px-2 py-0.5 border border-red-900/30 bg-red-950/10 text-red-950 text-[12px] font-bold rounded-xs shadow-2xs"
+                    >
+                      {getNomeRaca(id)}
+                    </span>
+                  ))
+                ) : (
+                  <span className="italic text-[#4a321a]/80 font-medium">
+                    Sem Dados
+                  </span>
+                )}
+              </p>
+
+              <p className="leading-tight">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
+                  Categorias:
+                </span>
+                <span className="italic font-medium">
+                  {raca.categoria && raca.categoria.length > 0
+                    ? raca.categoria.join(", ")
+                    : "Sem Dados"}
+                </span>
+              </p>
+            </div>
+
+            {/* Coluna da Direita (Regiões isoladas) */}
+            <div className="w-35 shrink-0 flex flex-col pl-2 border-l border-[#4a321a]/15">
+              <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs block w-max mb-1.5">
+                Regiões:
+              </span>
+              <div className="italic font-medium flex flex-col gap-0.5 pl-1">
+                {raca.regioes_ids && raca.regioes_ids.length > 0 ? (
+                  raca.regioes_ids.map(getNomeRegiao).map((reg, idx) => (
+                    <span
+                      key={idx}
+                      className="block text-[13px] leading-tight text-[#210f05]"
+                    >
+                      — {reg}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-[13px]">Sem Dados</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Seção de Fraquezas */}
+          <div className="mt-4 shrink-0">
+            <div className="bg-[#4a321a]/5 border-l-3 border-[#a42b2b] p-2.5 rounded-r-sm shadow-xs">
+              <h4 className="font-['Cinzel'] text-[10px] text-[#381a0a] font-bold tracking-widest uppercase mb-1.5">
+                Registros de Fraqueza
+              </h4>
+
+              <div className="grid grid-cols-1 gap-1.5">
+                <p className="text-[13px] leading-tight flex gap-1.5">
+                  <span className="font-['Cinzel'] font-bold text-[#a42b2b] text-[10px] uppercase mt-0.5 shrink-0 tracking-wider">
+                    Física:
+                  </span>
+                  <span className="text-[#170a03] italic flex-1 font-medium">
+                    {fraquezas.Física || fraquezas.Físicas || "Sem Dados"}
+                  </span>
+                </p>
+                <p className="text-[13px] leading-tight flex gap-1.5">
+                  <span className="font-['Cinzel'] font-bold text-[#a42b2b] text-[10px] uppercase mt-0.5 shrink-0 tracking-wider">
+                    Mágica:
+                  </span>
+                  <span className="text-[#170a03] italic flex-1 font-medium">
+                    {fraquezas.Mágica || fraquezas.Mágicas || "Sem Dados"}
+                  </span>
+                </p>
+                <p className="text-[13px] leading-tight flex gap-1.5">
+                  <span className="font-['Cinzel'] font-bold text-[#a42b2b] text-[10px] uppercase mt-0.5 shrink-0 tracking-wider">
+                    Astral:
+                  </span>
+                  <span className="text-[#170a03] italic flex-1 font-medium">
+                    {fraquezas.Astral || "Sem Dados"}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Linha divisória de tinta */}
-        <div className="w-full h-px bg-[#7a6452]/40 mb-4 rounded-[50%]" />
-
-        {/* Informações Técnicas e Relacionamentos (Baixo) */}
-        <div className="flex-1 overflow-y-auto space-y-3 text-xs text-[#3d2b1f] font-serif pr-2 custom-scrollbar">
-          <p>
-            <strong>⏳ Longevidade:</strong> {raca.idade_media}
-          </p>
-          <p>
-            <strong>🏷️ Categoria(s):</strong> {raca.categoria.join(", ")}
-          </p>
-
-          {raca.aliancas_ids && raca.aliancas_ids.length > 0 && (
-            <p>
-              <strong>🤝 Alianças Conhecidas:</strong>{" "}
-              <span className="text-blue-900/80 cursor-pointer hover:underline">
-                {raca.aliancas_ids.map(getNomeRaca).join(", ")}
-              </span>
-            </p>
-          )}
-
-          {raca.inimigos_ids && raca.inimigos_ids.length > 0 && (
-            <p>
-              <strong>⚔️ Inimigos Declarados:</strong>{" "}
-              <span className="text-red-900/80 cursor-pointer hover:underline">
-                {raca.inimigos_ids.map(getNomeRaca).join(", ")}
-              </span>
-            </p>
-          )}
-
-          {raca.fraquezas && Object.keys(raca.fraquezas).length > 0 && (
-            <div className="mt-2 bg-[#7a6452]/10 p-2 border-l-2 border-[#7a6452]">
-              <strong className="block mb-1 font-bold text-[#5c3a21]">
-                ⚠️ Registros de Fraqueza:
-              </strong>
-              <ul className="list-disc list-inside space-y-1 ml-1 text-[#4a3018]">
-                {raca.fraquezas.Físicas && (
-                  <li>
-                    <strong>Física:</strong> {raca.fraquezas.Físicas}
-                  </li>
-                )}
-                {raca.fraquezas.Mágicas && (
-                  <li>
-                    <strong>Mágica:</strong> {raca.fraquezas.Mágicas}
-                  </li>
-                )}
-                {raca.fraquezas.Astral && (
-                  <li>
-                    <strong>Astral:</strong> {raca.fraquezas.Astral}
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
+        {/* PAGINAÇÃO FIXA ABSOLUTA */}
+        <div className="absolute bottom-0 left-0 right-0 font-['Cinzel'] text-xs font-bold text-[#4a321a]/80 text-center pt-2 border-t border-[#4a321a]/20 tracking-widest bg-[#cdb394] z-20">
+          — {pageNum} —
         </div>
       </div>
     );
   };
 
-  // 📖 PÁGINAS ABERTAS (Pergaminho envelhecido)
   return (
-    <div className="flex flex-col items-center animate-fade-in">
-      <div className="flex w-212.5 h-150 bg-[#d5c2a5] border-12 border-[#2a1e1a] rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
-        {/* Sombra interna para dar o aspecto de sujeira/tempo no papel */}
-        <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(89,62,43,0.6)] pointer-events-none z-0" />
-
-        {/* Dobra central do livro e sombras */}
-        <div className="absolute inset-y-0 left-1/2 w-10 -ml-5 bg-linear-to-r from-transparent via-[#593e2b]/50 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 left-1/2 w-0.5 bg-[#3d2b1f]/60 shadow-[0_0_10px_rgba(0,0,0,0.8)] z-10" />
+    <div className="flex flex-col items-center animate-fade-in font-['IM_Fell_English'] selection:bg-[#a42b2b]/20">
+      <div className="w-212.5 h-160 flex relative border-12 border-[#1a0e0a] shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden bg-[#cdb394]">
+        <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(50,25,10,0.6)] pointer-events-none z-20" />
 
         {/* PÁGINA ESQUERDA */}
-        <div className="w-1/2 h-full p-8 px-10 relative z-0 flex flex-col justify-between">
-          {renderizarPagina(racaEsquerda, currentPage + 1)}
-          <span className="text-xs text-center font-serif text-[#7a6452] mt-4 font-bold border-t border-[#7a6452]/30 pt-2">
-            - {currentPage + 1} -
-          </span>
+        <div className="w-1/2 h-full relative overflow-hidden bg-radial-[at_10%_15%,rgba(60,30,10,0.15)_0%,transparent_60%]">
+          <div className="p-8 pr-10 pb-6 h-full">
+            {renderizarPagina(racaEsquerda, currentPage + 1, "left")}
+          </div>
         </div>
 
+        {/* DOBRA CENTRAL */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-10 -ml-5 bg-linear-to-r from-[#120703]/75 via-[#381d0d]/25 to-[#120703]/75 z-30 pointer-events-none" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-black/85 z-30 shadow-[0_0_10px_rgba(0,0,0,0.9)]" />
+
         {/* PÁGINA DIREITA */}
-        <div className="w-1/2 h-full p-8 px-10 relative z-0 flex flex-col justify-between bg-linear-to-l from-transparent to-[#c8b394]/30">
-          {renderizarPagina(racaDireita, currentPage + 2)}
-          <span className="text-xs text-center font-serif text-[#7a6452] mt-4 font-bold border-t border-[#7a6452]/30 pt-2">
-            - {currentPage + 2} -
-          </span>
+        <div className="w-1/2 h-full relative overflow-hidden bg-radial-[at_90%_15%,rgba(60,30,10,0.12)_0%,transparent_60%]">
+          <div className="p-8 pl-10 pb-6 h-full">
+            {renderizarPagina(racaDireita, currentPage + 2, "right")}
+          </div>
         </div>
       </div>
 
-      {/* CONTROLES ESTILO MESA DE RPG */}
-      <div className="flex gap-8 mt-8">
+      {/* CONTROLES */}
+      <div className="flex gap-6 mt-6 items-center">
         <button
           onClick={voltarPagina}
           disabled={currentPage === 0}
-          className="px-6 py-2 bg-[#2a1e1a] hover:bg-[#3d2b1f] text-[#d5c2a5] disabled:opacity-30 disabled:hover:bg-[#2a1e1a] rounded font-serif tracking-widest text-sm transition-all shadow-lg border border-[#593e2b]"
+          className="px-6 py-2 bg-[#1a0e0a] text-[#cdb394] border border-[#3a2518] rounded shadow-md font-['Cinzel'] text-xs font-bold tracking-widest disabled:opacity-25 hover:bg-[#2c1a0e] transition-all cursor-pointer"
         >
-          ⮜ Página Anterior
+          Anterior
         </button>
         <button
           onClick={() => setIsOpen(false)}
-          className="px-4 py-2 bg-[#1a1311] hover:bg-[#8b0000] text-[#7a6452] hover:text-white rounded font-serif text-xs uppercase tracking-widest transition-all border border-[#2a1e1a]"
+          className="px-4 py-2 bg-black text-[#6e5440] border border-[#1a0e0a] rounded font-['Cinzel'] text-[10px] font-bold tracking-widest hover:bg-[#a42b2b] hover:text-white transition-all cursor-pointer"
         >
           Fechar Grimório
         </button>
         <button
           onClick={avancarPagina}
           disabled={currentPage + 2 >= totalRacas}
-          className="px-6 py-2 bg-[#2a1e1a] hover:bg-[#3d2b1f] text-[#d5c2a5] disabled:opacity-30 disabled:hover:bg-[#2a1e1a] rounded font-serif tracking-widest text-sm transition-all shadow-lg border border-[#593e2b]"
+          className="px-6 py-2 bg-[#1a0e0a] text-[#cdb394] border border-[#3a2518] rounded shadow-md font-['Cinzel'] text-xs font-bold tracking-widest disabled:opacity-25 hover:bg-[#2c1a0e] transition-all cursor-pointer"
         >
-          Próxima Página ⮞
+          Próxima
         </button>
       </div>
     </div>
