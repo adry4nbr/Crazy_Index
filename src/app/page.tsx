@@ -1,4 +1,4 @@
-import Livro from "@/components/Livro";
+import Livro from "@/components/livro/Livro";
 
 export default function Home() {
   return (
