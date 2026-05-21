@@ -1,0 +1,49 @@
+MIT License + Creative Commons BY-NC-ND 4.0
+
+================================================================================
+PART 1: SOFTWARE CODE (MIT LICENSE)
+================================================================================
+Copyright (c) 2026 Adryan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+PART 2: UNIVERSE, LORE, TEXTS, AND CONTENT (CREATIVE COMMONS)
+================================================================================
+The intellectual property regarding the fictional universe, worldbuilding, 
+lore, names of races, regions, bestiary descriptions, and any original text 
+or creative content published within the "Crazy Index" project is licensed 
+under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 
+International License (CC BY-NC-ND 4.0).
+
+Under this license, others are free to share, copy, and redistribute the 
+creative material in any medium or format under the following terms:
+
+1. Attribution (BY) — You must give appropriate credit, provide a link to the 
+   license, and indicate if changes were made. You may do so in any reasonable 
+   manner, but not in any way that suggests the licensor endorses you or your use.
+   
+2. NonCommercial (NC) — You may not use the material for commercial purposes 
+   or financial gain.
+   
+3. NoDerivatives (ND) — If you remix, transform, or build upon the material, 
+   you may not distribute the modified material.
+
+To view a full copy of this license, visit:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
