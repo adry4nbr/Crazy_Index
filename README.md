@@ -27,7 +27,7 @@ O projeto utiliza o que há de mais moderno no ecossistema de desenvolvimento we
 
 ---
 
-## 📦 Estrutura de Pastas Relevante(Atualmente)
+## 📦 Estrutura de Pastas Relevante
 
 ```text
 crazy-index/
@@ -40,4 +40,57 @@ crazy-index/
 │       └── mockData.ts      # Contratos (Interfaces TS) e dados de teste iniciais
 ├── README.md
 └── package.json
+
+```
+
+---
+
+## 🔧 Como Executar o Projeto Localmente
+
+Para clonar e rodar esta aplicação no seu computador, você precisará do [Git](https://git-scm.com) e do [Node.js](https://nodejs.org/) instalados.
+
+1. **Clone o repositório:**
+
+```bash
+git clone [https://github.com/seu-usuario/crazy-index.git](https://github.com/seu-usuario/crazy-index.git)
+
+```
+
+2. **Entre na pasta do projeto:**
+
+```bash
+cd crazy-index
+
+```
+
+3. **Instale as dependências:**
+
+```bash
+npm install
+
+```
+
+4. **Inicie o servidor de desenvolvimento:**
+
+```bash
+npm run dev
+
+```
+
+5. Abra o seu navegador e acesse **`http://localhost:3000`** para ver o projeto rodando.
+
+---
+
+## 🗺️ Roadmap de Desenvolvimento
+
+- [x] Setup do projeto Next.js com TypeScript e Tailwind v4
+- [x] Modelagem do contrato de dados (`mockData.ts`)
+- [ ] Desenvolvimento da interface e efeito de passar páginas (Front-end Estático)
+- [ ] Implementação da lógica de filtros avançados
+- [ ] Integração com Banco de Dados e Sistema de Autenticação para Administrador
+- [ ] Otimização para dispositivos móveis (Responsividade)
+- [ ] Expansão para múltiplos livros (Cidades, Itens e Facções)
+
+```
+
 ```
