@@ -9,14 +9,42 @@ export default function Livro() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
 
+  // Estado para controlar qual nota mágica está ativa temporariamente
+  const [activeNote, setActiveNote] = useState<{
+    side: "left" | "right";
+    title: string;
+    items: string[];
+  } | null>(null);
+
   const totalRacas = mockRacas.length;
 
+  const alternarNota = (
+    e: React.MouseEvent, // 1. Recebe o evento de clique aqui
+    side: "left" | "right",
+    title: string,
+    items: string[],
+  ) => {
+    e.stopPropagation(); // 2. Impede que o clique suba para o fundo e feche o papel na hora!
+
+    if (activeNote && activeNote.side === side && activeNote.title === title) {
+      setActiveNote(null);
+    } else {
+      setActiveNote({ side, title, items });
+    }
+  };
+
   const avancarPagina = () => {
-    if (currentPage + 2 < totalRacas) setCurrentPage(currentPage + 2);
+    if (currentPage + 2 < totalRacas) {
+      setCurrentPage(currentPage + 2);
+      setActiveNote(null); // Limpa notas ao mudar de página
+    }
   };
 
   const voltarPagina = () => {
-    if (currentPage - 2 >= 0) setCurrentPage(currentPage - 2);
+    if (currentPage - 2 >= 0) {
+      setCurrentPage(currentPage - 2);
+      setActiveNote(null); // Limpa notas ao mudar de página
+    }
   };
 
   const getNomeRaca = (id: string) => {
@@ -32,172 +60,82 @@ export default function Livro() {
   if (!isOpen) {
     return (
       <>
+        {/* Mantido apenas o estritamente necessário (Fontes e Keyframes) */}
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital,wght@0,400;1,400&display=swap');
-
-          /* Estilos específicos da Capa do Grimório Arcano */
-          .grimorio-cover {
-            width: 340px;
-            height: 500px;
-            background: #1a0e0a;
-            border-radius: 4px 18px 18px 4px;
-            border: 3px solid #0d0806;
-            box-shadow: 12px 12px 40px rgba(0,0,0,0.9), inset 0 0 60px rgba(0,0,0,0.7);
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-          }
-          .grimorio-cover:hover { 
-            transform: scale(1.02) rotate(-1deg); 
-            box-shadow: 18px 18px 50px rgba(0,0,0,0.95); 
-          }
-          .cover-spine {
-            position: absolute; left: 0; top: 0; bottom: 0; width: 28px;
-            background: #0d0806;
-            box-shadow: 4px 0 12px rgba(0,0,0,0.8);
-            border-right: 1px solid #2a1a12;
-          }
-          .cover-inner-border {
-            position: absolute; inset: 14px 10px 14px 38px;
-            border: 1px solid #3a2518;
-            border-radius: 2px 12px 12px 2px;
-            pointer-events: none;
-          }
-          .cover-inner-border2 {
-            position: absolute; inset: 20px 16px 20px 44px;
-            border: 1px dashed #2e1c10;
-            border-radius: 1px 10px 10px 1px;
-            pointer-events: none;
-          }
-          .cover-title {
-            position: absolute; top: 80px; left: 50px; right: 20px;
-            text-align: center;
-            font-family: 'Cinzel', serif;
-            font-size: 34px;
-            font-weight: 700;
-            color: #8b2020;
-            text-shadow: 0 0 20px rgba(139,32,32,0.6), 0 2px 4px rgba(0,0,0,1);
-            letter-spacing: 6px;
-            line-height: 1.2;
-          }
-          .cover-subtitle {
-            position: absolute; top: 178px; left: 50px; right: 20px;
-            text-align: center;
-            font-family: 'IM Fell English', serif;
-            font-size: 12px;
-            color: #5a3e2e;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-          }
-          .cover-sigil {
-            position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
-            font-size: 64px; color: #8b2020; opacity: 0.18;
-            line-height: 1;
-          }
-          .cover-sigil2 {
-            position: absolute; bottom: 108px; left: 50%; transform: translateX(-50%);
-            font-size: 48px; color: #5a3020; opacity: 0.12;
-            line-height: 1;
-          }
-          .cover-hint {
-            position: absolute; bottom: 24px; left: 50px; right: 20px;
-            text-align: center;
-            font-family: 'IM Fell English', serif;
-            font-size: 10px;
-            color: #3a2518;
-            font-style: italic;
-            animation: pulse-text 3s ease-in-out infinite;
-          }
-          @keyframes pulse-text { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
-          .cover-ornament {
-            position: absolute;
-            color: #2e1c10;
-            font-size: 18px;
-            opacity: 0.6;
+          @keyframes pulse-text { 
+            0%, 100% { opacity: 0.4; } 
+            50% { opacity: 0.9; } 
           }
         `}</style>
 
         <div className="flex justify-center items-center py-8">
           <div
-            className="grimorio-cover select-none"
+            className="w-85 h-125 bg-[#1a0e0a] rounded-l-sm rounded-r-[18px] border-[3px] border-[#0d0806] shadow-[12px_12px_40px_rgba(0,0,0,0.9),inset_0_0_60px_rgba(0,0,0,0.7)] relative cursor-pointer transition-all duration-300 ease-in-out overflow-hidden hover:scale-[1.02] hover:-rotate-1 hover:shadow-[18px_18px_50px_rgba(0,0,0,0.95),inset_0_0_60px_rgba(0,0,0,0.7)] select-none"
             onClick={() => setIsOpen(true)}
           >
-            <div className="cover-spine" />
-            <div className="cover-inner-border" />
-            <div className="cover-inner-border2" />
+            {/* Lombada do Livro */}
+            <div className="absolute left-0 top-0 bottom-0 w-7 bg-[#0d0806] shadow-[4px_0_12px_rgba(0,0,0,0.8)] border-r border-[#2a1a12]" />
 
-            <div
-              className="cover-ornament"
-              style={{ top: "40px", left: "44px", fontSize: "14px" }}
-            >
+            {/* Bordas Internas Decorativas */}
+            <div className="absolute top-3.5 right-2.5 bottom-3.5 left-9.5 border border-[#3a2518] rounded-l-xs rounded-r-xl pointer-events-none" />
+            <div className="absolute top-5 right-4 bottom-5 left-11 border border-dashed border-[#2e1c10] rounded-l-[1px] rounded-r-[10px] pointer-events-none" />
+
+            {/* Ornamentos (Estrelas nos cantos) */}
+            <div className="absolute text-[#2e1c10] opacity-60 text-[14px] top-10 left-11">
               ✦
             </div>
-            <div
-              className="cover-ornament"
-              style={{ top: "40px", right: "14px", fontSize: "14px" }}
-            >
+            <div className="absolute text-[#2e1c10] opacity-60 text-[14px] top-10 right-3.5">
               ✦
             </div>
-            <div
-              className="cover-ornament"
-              style={{ bottom: "42px", left: "44px", fontSize: "14px" }}
-            >
+            <div className="absolute text-[#2e1c10] opacity-60 text-[14px] bottom-10.5 left-11">
               ✦
             </div>
-            <div
-              className="cover-ornament"
-              style={{ bottom: "42px", right: "14px", fontSize: "14px" }}
-            >
+            <div className="absolute text-[#2e1c10] opacity-60 text-[14px] bottom-10.5 right-3.5">
               ✦
             </div>
 
-            <div className="cover-title">
+            {/* Título Principal */}
+            <div
+              className="absolute top-20 left-12.5 right-5 text-center font-['Cinzel'] text-[34px] font-bold text-[#8b2020] tracking-[6px] leading-[1.2]"
+              style={{
+                textShadow:
+                  "0 0 20px rgba(139,32,32,0.6), 0 2px 4px rgba(0,0,0,1)",
+              }}
+            >
               CRAZY
               <br />
               INDEX
             </div>
-            <div className="cover-subtitle">Tomo I · Bestiário</div>
 
-            <div
-              style={{
-                position: "absolute",
-                top: "220px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "120px",
-                height: "1px",
-                background:
-                  "linear-gradient(to right,transparent,#3a2518,transparent)",
-              }}
-            />
+            {/* Subtítulo */}
+            <div className="absolute top-44.5 left-12.5 right-5 text-center font-['IM_Fell_English'] text-[12px] text-[#5a3e2e] tracking-[4px] uppercase">
+              Tomo I · Bestiário
+            </div>
 
-            <div className="cover-sigil2">☽</div>
-            <div className="cover-sigil">⛤</div>
+            {/* Linha Divisória de Gradiente Arcano */}
+            <div className="absolute top-55 left-1/2 -translate-x-1/2 w-30 h-px bg-linear-to-r from-transparent via-[#3a2518] to-transparent" />
 
-            <div
-              style={{
-                position: "absolute",
-                bottom: "80px",
-                left: "44px",
-                right: "14px",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Cinzel', serif",
-                  fontSize: "8px",
-                  color: "#2e1a0e",
-                  letterSpacing: "2px",
-                  opacity: 0.5,
-                }}
-              >
+            {/* Símbolos / Sigilos */}
+            <div className="absolute bottom-27 left-1/2 -translate-x-1/2 text-[48px] text-[#5a3020] opacity-[0.12] leading-none">
+              ☽
+            </div>
+            <div className="absolute bottom-25 left-1/2 -translate-x-1/2 text-[64px] text-[#8b2020] opacity-[0.18] leading-none">
+              ⛤
+            </div>
+
+            {/* Runas Antigas */}
+            <div className="absolute bottom-20 left-11 right-3.5 text-center">
+              <div className="font-['Cinzel'] text-[8px] text-[#2e1a0e] tracking-[2px] opacity-50">
                 ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ
               </div>
             </div>
 
-            <div className="cover-hint">
+            {/* Texto de Dica Pulsação */}
+            <div
+              className="absolute bottom-6 left-12.5 right-5 text-center font-['IM_Fell_English'] text-[10px] text-[#3a2518] italic"
+              style={{ animation: "pulse-text 3s ease-in-out infinite" }}
+            >
               Ouse abrir o conhecimento proibido...
             </div>
           </div>
@@ -226,6 +164,12 @@ export default function Livro() {
     }
 
     const fraquezas = (raca.fraquezas as Record<string, string>) || {};
+
+    // Preparação dos arrays
+    const aliancas = raca.aliancas_ids || [];
+    const inimigos = raca.inimigos_ids || [];
+    const categorias = raca.categoria || [];
+    const regioes = raca.regioes_ids || [];
 
     return (
       <div className="h-full flex flex-col font-['IM_Fell_English'] relative z-10 select-none pb-8">
@@ -273,11 +217,12 @@ export default function Livro() {
 
           <div className="w-full h-px bg-[#4a321a]/25 my-3 shrink-0" />
 
-          {/* Informações Técnicas Divididas em 2 Colunas */}
-          <div className="flex gap-2 text-[14.5px] text-[#170a03] shrink-0 items-start">
-            {/* Coluna da Esquerda (Informações Gerais) */}
-            <div className="flex-1 space-y-2">
-              <p className="leading-tight">
+          {/* ── CONTEINER RELATIVO PARA AS INFORMAÇÕES E O PAPEL MÁGICO ── */}
+          <div className="relative shrink-0">
+            {/* Lista Unificada na Esquerda */}
+            <div className="w-57.5 space-y-2 text-[14.5px] text-[#170a03]">
+              {/* Longevidade */}
+              <p className="leading-tight flex items-center">
                 <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
                   Longevidade:
                 </span>
@@ -286,88 +231,193 @@ export default function Livro() {
                 </span>
               </p>
 
-              <p className="leading-tight flex flex-wrap items-center gap-1.5">
-                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1">
-                  Alianças:
+              {/* Regiões */}
+              <p className="leading-tight flex items-center flex-wrap">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
+                  Regiões:
                 </span>
-                {raca.aliancas_ids && raca.aliancas_ids.length > 0 ? (
-                  raca.aliancas_ids.map((id) => (
+                {regioes.length > 0 ? (
+                  regioes.length > 1 ? (
                     <span
-                      key={id}
-                      className="px-2 py-0.5 border border-blue-900/30 bg-blue-950/10 text-blue-950 text-[12px] font-bold rounded-xs shadow-2xs"
+                      onClick={(e) =>
+                        alternarNota(
+                          e, // Passa o evento
+                          side,
+                          "Territórios Vistos",
+                          regioes.map(getNomeRegiao),
+                        )
+                      }
+                      className="font-bold px-1 rounded-xs transition-colors hover:bg-[#a42b2b]/10 flex items-center cursor-pointer select-none"
                     >
-                      {getNomeRaca(id)}
+                      {getNomeRegiao(regioes[0])}{" "}
+                      <span className="text-[10px] font-medium text-[#8b3a3a] ml-1">
+                        (+{regioes.length - 1}) ✦
+                      </span>
                     </span>
-                  ))
+                  ) : (
+                    <span className="font-bold text-[#210f05]">
+                      {getNomeRegiao(regioes[0])}
+                    </span>
+                  )
                 ) : (
-                  <span className="italic text-[#4a321a]/80 font-medium">
+                  <span className="italic text-[#4a321a]/60 font-medium">
                     Sem Dados
                   </span>
                 )}
               </p>
 
-              <p className="leading-tight flex flex-wrap items-center gap-1.5">
-                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1">
-                  Inimigos:
-                </span>
-                {raca.inimigos_ids && raca.inimigos_ids.length > 0 ? (
-                  raca.inimigos_ids.map((id) => (
-                    <span
-                      key={id}
-                      className="px-2 py-0.5 border border-red-900/30 bg-red-950/10 text-red-950 text-[12px] font-bold rounded-xs shadow-2xs"
-                    >
-                      {getNomeRaca(id)}
-                    </span>
-                  ))
-                ) : (
-                  <span className="italic text-[#4a321a]/80 font-medium">
-                    Sem Dados
-                  </span>
-                )}
-              </p>
-
-              <p className="leading-tight">
+              {/* Categorias */}
+              <p className="leading-tight flex items-center flex-wrap">
                 <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
                   Categorias:
                 </span>
-                <span className="italic font-medium">
-                  {raca.categoria && raca.categoria.length > 0
-                    ? raca.categoria.join(", ")
-                    : "Sem Dados"}
+                {categorias.length > 0 ? (
+                  categorias.length > 1 ? (
+                    <span
+                      onClick={(e) =>
+                        alternarNota(
+                          e, // Passa o evento
+                          side,
+                          "Classificações", // Corrigido o título
+                          categorias, // Corrigido os itens
+                        )
+                      }
+                      className="font-bold px-1 rounded-xs transition-colors hover:bg-[#a42b2b]/10 flex items-center cursor-pointer select-none"
+                    >
+                      {categorias[0]}{" "}
+                      <span className="text-[10px] font-medium text-[#8b3a3a] ml-1">
+                        (+{categorias.length - 1}) ✦
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="font-bold text-[#210f05]">
+                      {categorias[0]}
+                    </span>
+                  )
+                ) : (
+                  <span className="italic text-[#4a321a]/60 font-medium">
+                    Sem Dados
+                  </span>
+                )}
+              </p>
+
+              {/* Alianças */}
+              <p className="leading-tight flex items-center flex-wrap">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
+                  Alianças:
                 </span>
+                {aliancas.length > 0 ? (
+                  aliancas.length > 1 ? (
+                    <span
+                      onClick={(e) =>
+                        alternarNota(
+                          e, // Passa o evento
+                          side,
+                          "Registros de Aliança", // Corrigido o título
+                          aliancas.map(getNomeRaca), // Corrigido os itens
+                        )
+                      }
+                      className="font-bold px-1 rounded-xs transition-colors hover:bg-[#a42b2b]/10 flex items-center cursor-pointer select-none"
+                    >
+                      {getNomeRaca(aliancas[0])}{" "}
+                      <span className="text-[10px] font-medium text-[#8b3a3a] ml-1">
+                        (+{aliancas.length - 1}) ✦
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="font-bold text-[#210f05]">
+                      {getNomeRaca(aliancas[0])}
+                    </span>
+                  )
+                ) : (
+                  <span className="italic text-[#4a321a]/60 font-medium">
+                    Sem Dados
+                  </span>
+                )}
+              </p>
+
+              {/* Inimigos */}
+              <p className="leading-tight flex items-center flex-wrap">
+                <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs mr-1.5">
+                  Inimigos:
+                </span>
+                {inimigos.length > 0 ? (
+                  inimigos.length > 1 ? (
+                    <span
+                      onClick={(e) =>
+                        alternarNota(
+                          e, // Passa o evento
+                          side,
+                          "Inimizades Antigas", // Corrigido o título
+                          inimigos.map(getNomeRaca), // Corrigido os itens
+                        )
+                      }
+                      className="font-bold px-1 rounded-xs transition-colors hover:bg-[#a42b2b]/10 flex items-center cursor-pointer select-none"
+                    >
+                      {getNomeRaca(inimigos[0])}{" "}
+                      <span className="text-[10px] font-medium text-[#8b3a3a] ml-1">
+                        (+{inimigos.length - 1}) ✦
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="font-bold text-[#210f05]">
+                      {getNomeRaca(inimigos[0])}
+                    </span>
+                  )
+                ) : (
+                  <span className="italic text-[#4a321a]/60 font-medium">
+                    Sem Dados
+                  </span>
+                )}
               </p>
             </div>
 
-            {/* Coluna da Direita (Regiões isoladas) */}
-            <div className="w-35 shrink-0 flex flex-col pl-2 border-l border-[#4a321a]/15">
-              <span className="font-['Cinzel'] font-bold text-[10px] text-[#381a0a] tracking-wider uppercase bg-[#4a321a]/10 px-1.5 py-0.5 rounded-xs block w-max mb-1.5">
-                Regiões:
-              </span>
-              <div className="italic font-medium flex flex-col gap-0.5 pl-1">
-                {raca.regioes_ids && raca.regioes_ids.length > 0 ? (
-                  raca.regioes_ids.map(getNomeRegiao).map((reg, idx) => (
-                    <span
+            {/* O PAPEL MÁGICO (Sem pointer-events-none para permitir cliques) */}
+            {activeNote && activeNote.side === side && (
+              <div
+                onClick={(e) => e.stopPropagation()} // Adicione essa linha aqui
+                className="absolute -top-2.5 right-0 w-40.5 bg-[#f5ebd5] border border-[#6b4c31]/50 rounded-xs shadow-[8px_10px_25px_rgba(0,0,0,0.45)] p-3 rotate-[1.5deg] flex flex-col z-50 transition-all duration-200 animate-fade-in"
+              >
+                {/* Fita adesiva mágica */}
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-3 bg-[#a42b2b]/15 border border-dashed border-[#a42b2b]/30 mix-blend-multiply transform -rotate-2" />
+
+                <h5 className="font-['Cinzel'] text-[11px] font-bold text-[#a42b2b] tracking-wider uppercase border-b border-[#4a321a]/20 pb-0.5 mb-2 text-center">
+                  {activeNote.title}
+                </h5>
+
+                <div className="flex flex-col space-y-1 text-[13.5px] leading-tight font-medium italic text-[#301c0f]">
+                  {activeNote.items.map((item, idx) => (
+                    <div
                       key={idx}
-                      className="block text-[13px] leading-tight text-[#210f05]"
+                      // Adicionado: cursor-pointer e um efeito hover para o usuário saber que é clicável
+                      className="flex items-start gap-1.5 py-0.5 border-b border-[#4a321a]/5 last:border-0 cursor-pointer hover:text-[#a42b2b] hover:underline transition-all"
+                      // Adicionado: Função provisória que você vai substituir no futuro pela navegação real
+                      onClick={() => {
+                        alert(
+                          `No futuro, isso vai te levar para a página de: ${item}`,
+                        );
+                        // Aqui você usará funções como o router.push() do Next.js ou atualizará o currentPage
+                      }}
                     >
-                      — {reg}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-[13px]">Sem Dados</span>
-                )}
+                      <span className="text-[#a42b2b] text-[10px] mt-0.5 shrink-0">
+                        ✧
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Seção de Fraquezas */}
-          <div className="mt-4 shrink-0">
-            <div className="bg-[#4a321a]/5 border-l-3 border-[#a42b2b] p-2.5 rounded-r-sm shadow-xs">
-              <h4 className="font-['Cinzel'] text-[10px] text-[#381a0a] font-bold tracking-widest uppercase mb-1.5">
+          {/* Seção de Fraquezas (Fica imóvel por baixo do papel mágico) */}
+          <div className="mt-1 shrink-0 relative z-0">
+            <div className="bg-[#4a321a]/5 border-l-3 border-[#a42b2b] p-2 rounded-r-sm shadow-xs">
+              <h4 className="font-['Cinzel'] text-[10px] text-[#381a0a] font-bold tracking-widest uppercase mb-1">
                 Registros de Fraqueza
               </h4>
 
-              <div className="grid grid-cols-1 gap-1.5">
+              <div className="grid grid-cols-1 gap-1">
                 <p className="text-[13px] leading-tight flex gap-1.5">
                   <span className="font-['Cinzel'] font-bold text-[#a42b2b] text-[10px] uppercase mt-0.5 shrink-0 tracking-wider">
                     Física:
@@ -406,7 +456,10 @@ export default function Livro() {
   };
 
   return (
-    <div className="flex flex-col items-center animate-fade-in font-['IM_Fell_English'] selection:bg-[#a42b2b]/20">
+    <div
+      onClick={() => setActiveNote(null)} // Adicione essa linha aqui! (Pega cliques fora)
+      className="flex flex-col items-center animate-fade-in font-['IM_Fell_English'] selection:bg-[#a42b2b]/20"
+    >
       <div className="w-212.5 h-160 flex relative border-12 border-[#1a0e0a] shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden bg-[#cdb394]">
         <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(50,25,10,0.6)] pointer-events-none z-20" />
 
@@ -439,7 +492,10 @@ export default function Livro() {
           Anterior
         </button>
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false);
+            setActiveNote(null);
+          }}
           className="px-4 py-2 bg-black text-[#6e5440] border border-[#1a0e0a] rounded font-['Cinzel'] text-[10px] font-bold tracking-widest hover:bg-[#a42b2b] hover:text-white transition-all cursor-pointer"
         >
           Fechar Grimório

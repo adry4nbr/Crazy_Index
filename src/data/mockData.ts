@@ -82,7 +82,7 @@ export const mockRacas: Raca[] = [
     descricao:
       "Criaturas da noite que se alimentam de essência vital (sangue). Possuem velocidade e regeneração aprimoradas, mas são severamente punidos pela luz solar.",
     aliancas_ids: ["raca_tritao"],
-    inimigos_ids: ["raca_lobisomem"],
+    inimigos_ids: ["raca_lobisomem", "raca_tritao"],
     categoria: ["Terrestre", "Mágico"],
     regioes_ids: [
       "regiao_medieval",
@@ -132,6 +132,8 @@ export const mockRacas: Raca[] = [
         "Armas com metais nobres ou especiais conseguem inibir sua regeneração",
       Mágicas:
         "Existem mágias que conseguem enfurecer e fazer com que ataquem seus aliados e armas mágicas conseguem ignorar sua pele resistente",
+      Astral:
+        "Com ataques que afetem sua alma podem quebrar o vinculo que eles tem com a Lua",
     },
   },
 ];
