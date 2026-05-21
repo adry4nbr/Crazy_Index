@@ -85,7 +85,7 @@ npm run dev
 
 - [x] Setup do projeto Next.js com TypeScript e Tailwind v4
 - [x] Modelagem do contrato de dados (`mockData.ts`)
-- [ ] Desenvolvimento da interface e efeito de passar páginas (Front-end Estático)
+- [x] Desenvolvimento da interface e efeito de passar páginas (Front-end Estático)
 - [ ] Implementação da lógica de filtros avançados
 - [ ] Integração com Banco de Dados e Sistema de Autenticação para Administrador
 - [ ] Otimização para dispositivos móveis (Responsividade)
