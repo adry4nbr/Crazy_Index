@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { mockRacas } from "@/data/mockData";
+import { Raca, mockRacas } from "@/data/mockData";
 
 export type ActiveNote = {
   side: "left" | "right";
@@ -7,12 +7,15 @@ export type ActiveNote = {
   items: string[];
 } | null;
 
-export function useLivro() {
+export function useLivro(racas: Raca[] = mockRacas) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [activeNote, setActiveNote] = useState<ActiveNote>(null);
 
-  const totalRacas = mockRacas.length;
+  const totalRacas = racas.length;
+
+  // Garante que a página atual não ultrapasse o total filtrado
+  const paginaSegura = Math.min(currentPage, Math.max(0, totalRacas - 1));
 
   const alternarNota = (
     e: React.MouseEvent,
@@ -29,20 +32,23 @@ export function useLivro() {
   };
 
   const avancarPagina = () => {
-    if (currentPage + 2 < totalRacas) {
+    if (paginaSegura + 2 < totalRacas) {
       setCurrentPage((p) => p + 2);
       setActiveNote(null);
     }
   };
 
   const voltarPagina = () => {
-    if (currentPage - 2 >= 0) {
+    if (paginaSegura - 2 >= 0) {
       setCurrentPage((p) => p - 2);
       setActiveNote(null);
     }
   };
 
-  const abrirLivro = () => setIsOpen(true);
+  const abrirLivro = () => {
+    setCurrentPage(0);
+    setIsOpen(true);
+  };
 
   const fecharLivro = () => {
     setIsOpen(false);
@@ -56,13 +62,13 @@ export function useLivro() {
 
   return {
     isOpen,
-    currentPage,
+    currentPage: paginaSegura,
     activeNote,
     totalRacas,
-    racaEsquerda: mockRacas[currentPage],
-    racaDireita: mockRacas[currentPage + 1],
-    podVoltar: currentPage > 0,
-    podAvancar: currentPage + 2 < totalRacas,
+    racaEsquerda: racas[paginaSegura],
+    racaDireita: racas[paginaSegura + 1],
+    podVoltar: paginaSegura > 0,
+    podAvancar: paginaSegura + 2 < totalRacas,
     abrirLivro,
     fecharLivro,
     alternarNota,

@@ -6,12 +6,12 @@ export interface Regiao {
   sub_regioes: string[];
 }
 
-// Criando tipos fixos para evitar erros de digitação depois
 export type OrigemRaca =
   | "Natural"
   | "Artificial"
+  | "Extraterrestre"
   | "Maldição"
-  | "Extraterrestre";
+  | "???";
 
 export type CategoriaRaca =
   | "Terrestre"
@@ -26,6 +26,16 @@ export type CategoriaRaca =
   | "Extinto"
   | "???";
 
+export type LongevidadeRaca =
+  | "50 anos"
+  | "100 anos"
+  | "150 anos"
+  | "200 anos"
+  | "300 anos"
+  | "500+"
+  | "Imortal"
+  | "???";
+
 export interface FraquezasRaca {
   Físicas?: string;
   Mágicas?: string;
@@ -36,13 +46,13 @@ export interface Raca {
   id: string;
   nome: string;
   origem: OrigemRaca;
-  idade_media: string | number;
+  idade_media: LongevidadeRaca;
   descricao: string;
   aliancas_ids: string[];
   inimigos_ids: string[];
   categoria: CategoriaRaca[];
-  regioes_ids: string[]; // Vai guardar o ID das regiões onde essa raça vive
-  fraquezas: FraquezasRaca; // Objeto com textos separados por tipo
+  regioes_ids: string[];
+  fraquezas: FraquezasRaca;
 }
 
 // --- 2. DADOS DE TESTE (MOCK DATA) ---
@@ -52,24 +62,22 @@ export const mockRegioes: Regiao[] = [
     id: "regiao_medieval",
     nome: "Medieval",
     sub_regioes: [
-      "Dark Fantasy", // Exemplos: Yharnam (Bloodborne), Novigrad (The Witcher 3) ou cidades de Dark Souls.
-      "Alchemypunk", // Exemplos: Cidades de A Plague Tale: Innocence ou Dishonored (que flerta entre o medieval tardio e o industrial).
-      "Dungeonpunk", // Exemplos: Ironforge (World of Warcraft) ou cidades do Underdark (D&D).
-      "Bio-Medieval", // Exemplos: Rivendell/Lóthlorien (O Senhor dos Anéis).
-      "Maritime Medieval", // Exemplos: Bilgewater (League of Legends) ou Braavos (Game of Thrones).
+      "Dark Fantasy",
+      "Alchemypunk",
+      "Dungeonpunk",
+      "Bio-Medieval",
+      "Maritime Medieval",
     ],
   },
   {
     id: "regiao_submundo",
     nome: "Submundo",
-    sub_regioes: [
-      "Inferno", // Base: Cristianismo / A Divina Comédia
-      "Tártaro", // Base: Mitologia Grega
-      "Duat", // Base: Mitologia Egípcia
-      "Helheim", // Base: Mitologia Nórdica
-      "Mictlan", // Base: Mitologia Asteca
-      "Diyu", // Base: Budismo/Taoísmo
-    ],
+    sub_regioes: ["Inferno", "Tártaro", "Duat", "Helheim", "Mictlan", "Diyu"],
+  },
+  {
+    id: "regiao_desconhecida",
+    nome: "???",
+    sub_regioes: [],
   },
 ];
 
@@ -84,18 +92,12 @@ export const mockRacas: Raca[] = [
     aliancas_ids: ["raca_tritao"],
     inimigos_ids: ["raca_lobisomem", "raca_tritao"],
     categoria: ["Terrestre", "Mágico"],
-    regioes_ids: [
-      "regiao_medieval",
-      "regiao_submundo",
-      "regiao_medieval",
-      "regiao_submundo",
-    ], // Vive tanto no feudo medieval quanto no submundo
+    regioes_ids: ["regiao_medieval", "regiao_submundo"],
     fraquezas: {
       Físicas:
         "Decapitação, estaca de madeira pura no coração e exposição extrema ao Sol.",
       Mágicas:
         "Vulnerabilidade a feitiços de luz sagrada e água benta encantada.",
-      // Note que "Astral" ficou de fora, o sistema vai saber lidar com isso!
     },
   },
   {
@@ -108,7 +110,7 @@ export const mockRacas: Raca[] = [
     aliancas_ids: ["raca_vampiro"],
     inimigos_ids: [],
     categoria: ["Aquático", "Terrestre"],
-    regioes_ids: ["regiao_medieval"], // Vive nas praias e mares da região medieval
+    regioes_ids: ["regiao_medieval"],
     fraquezas: {
       Físicas:
         "Desidratação severa se passar mais de 48 horas longe de água salgada.",
@@ -122,18 +124,18 @@ export const mockRacas: Raca[] = [
     origem: "Maldição",
     idade_media: "200 anos",
     descricao:
-      "Humanoides com semelhanças de um Lobo com garras afiadas, caninos imensos, sentidos aprimorados, fisico sobre-humano e com um fortalecimento a noite.",
+      "Humanoides com semelhanças de um Lobo com garras afiadas, caninos imensos, sentidos aprimorados, físico sobre-humano e com um fortalecimento à noite.",
     aliancas_ids: ["raca_tritao"],
     inimigos_ids: ["raca_vampiro"],
     categoria: ["Terrestre"],
     regioes_ids: ["regiao_medieval"],
     fraquezas: {
       Físicas:
-        "Armas com metais nobres ou especiais conseguem inibir sua regeneração",
+        "Armas com metais nobres ou especiais conseguem inibir sua regeneração.",
       Mágicas:
-        "Existem mágias que conseguem enfurecer e fazer com que ataquem seus aliados e armas mágicas conseguem ignorar sua pele resistente",
+        "Existem magias que conseguem enfurecer e fazer com que ataquem seus aliados e armas mágicas conseguem ignorar sua pele resistente.",
       Astral:
-        "Com ataques que afetem sua alma podem quebrar o vinculo que eles tem com a Lua",
+        "Com ataques que afetem sua alma podem quebrar o vínculo que eles têm com a Lua.",
     },
   },
 ];

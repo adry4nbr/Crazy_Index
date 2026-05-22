@@ -5,6 +5,7 @@ import {
   Raca,
   OrigemRaca,
   CategoriaRaca,
+  LongevidadeRaca,
   mockRacas,
   mockRegioes,
 } from "@/data/mockData";
@@ -17,6 +18,7 @@ const ORIGENS: OrigemRaca[] = [
   "Artificial",
   "Maldição",
   "Extraterrestre",
+  "???",
 ];
 
 const CATEGORIAS: CategoriaRaca[] = [
@@ -33,12 +35,23 @@ const CATEGORIAS: CategoriaRaca[] = [
   "???",
 ];
 
+const LONGEVIDADES: LongevidadeRaca[] = [
+  "50 anos",
+  "100 anos",
+  "150 anos",
+  "200 anos",
+  "300 anos",
+  "500+",
+  "Imortal",
+  "???",
+];
+
 const FRAQUEZA_TIPOS = ["Físicas", "Mágicas", "Astral"] as const;
 
 const VAZIO: FormState = {
   nome: "",
   origem: "Natural",
-  idade_media: "",
+  idade_media: "???",
   descricao: "",
   aliancas_ids: [],
   inimigos_ids: [],
@@ -97,7 +110,6 @@ export function RacaForm() {
     new Set(),
   );
 
-  // ── Handlers genéricos ──
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
@@ -154,7 +166,6 @@ export function RacaForm() {
     setFraquezasAtivas(new Set());
   };
 
-  // ── Render ──
   return (
     <form
       onSubmit={handleSubmit}
@@ -169,7 +180,7 @@ export function RacaForm() {
         </p>
       </div>
 
-      {/* ── Nome ── */}
+      {/* Nome */}
       <div>
         <Label>Nome *</Label>
         <Input
@@ -180,7 +191,7 @@ export function RacaForm() {
         />
       </div>
 
-      {/* ── Origem ── */}
+      {/* Origem */}
       <div>
         <Label>Origem *</Label>
         <div className="flex flex-wrap gap-2">
@@ -201,17 +212,28 @@ export function RacaForm() {
         </div>
       </div>
 
-      {/* ── Longevidade ── */}
+      {/* Longevidade — agora é select */}
       <div>
         <Label>Longevidade média</Label>
-        <Input
-          placeholder="Ex: 500+, 150 anos, Imortal..."
-          value={form.idade_media}
-          onChange={(e) => set("idade_media", e.target.value)}
-        />
+        <div className="flex flex-wrap gap-2">
+          {LONGEVIDADES.map((l) => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => set("idade_media", l)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                form.idade_media === l
+                  ? "bg-amber-800 text-white border-amber-800"
+                  : "bg-white text-stone-600 border-stone-300 hover:border-amber-600"
+              }`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* ── Descrição ── */}
+      {/* Descrição */}
       <div>
         <Label>Descrição *</Label>
         <Textarea
@@ -222,7 +244,7 @@ export function RacaForm() {
         />
       </div>
 
-      {/* ── Categorias ── */}
+      {/* Categorias */}
       <div>
         <Label>Categorias</Label>
         <div className="flex flex-wrap gap-2">
@@ -243,7 +265,7 @@ export function RacaForm() {
         </div>
       </div>
 
-      {/* ── Regiões ── */}
+      {/* Regiões */}
       <div>
         <Label>Regiões</Label>
         <div className="flex flex-wrap gap-2">
@@ -264,7 +286,7 @@ export function RacaForm() {
         </div>
       </div>
 
-      {/* ── Alianças ── */}
+      {/* Alianças */}
       <div>
         <Label>Alianças</Label>
         <div className="flex flex-wrap gap-2 mb-2">
@@ -295,7 +317,7 @@ export function RacaForm() {
         </div>
       </div>
 
-      {/* ── Inimigos ── */}
+      {/* Inimigos */}
       <div>
         <Label>Inimigos</Label>
         <div className="flex flex-wrap gap-2 mb-2">
@@ -326,7 +348,7 @@ export function RacaForm() {
         </div>
       </div>
 
-      {/* ── Fraquezas ── */}
+      {/* Fraquezas */}
       <div>
         <Label>Fraquezas</Label>
         <p className="text-xs text-stone-400 mb-3">
@@ -365,7 +387,6 @@ export function RacaForm() {
                 </span>
                 {tipo}
               </button>
-
               {fraquezasAtivas.has(tipo) && (
                 <Textarea
                   className="mt-2"
@@ -379,7 +400,7 @@ export function RacaForm() {
         </div>
       </div>
 
-      {/* ── Ações ── */}
+      {/* Ações */}
       <div className="flex gap-3 pt-2 border-t border-stone-100">
         <button
           type="submit"
