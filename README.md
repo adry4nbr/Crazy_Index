@@ -87,7 +87,8 @@ npm run dev
 - [x] Modelagem do contrato de dados (`mockData.ts`)
 - [x] Desenvolvimento da interface e efeito de passar páginas (Front-end Estático)
 - [x] Implementação da lógica de filtros avançados
-- [ ] Integração com Banco de Dados e Sistema de Autenticação para Administrador
+- [x] Integração com Banco de Dados e Sistema de Autenticação para Administrador
+- [ ] Testar Fluxo completo de ponta a ponto e Integrar os dois mundos.
 - [ ] Otimização para dispositivos móveis (Responsividade)
 - [ ] Expansão para múltiplos livros (Cidades, Itens e Facções)
 

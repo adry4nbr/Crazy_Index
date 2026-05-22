@@ -53,6 +53,7 @@ export interface Raca {
   categoria: CategoriaRaca[];
   regioes_ids: string[];
   fraquezas: FraquezasRaca;
+  imagem_url?: string;
 }
 
 // --- 2. DADOS DE TESTE (MOCK DATA) ---
