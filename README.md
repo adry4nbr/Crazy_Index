@@ -88,7 +88,7 @@ npm run dev
 - [x] Desenvolvimento da interface e efeito de passar páginas (Front-end Estático)
 - [x] Implementação da lógica de filtros avançados
 - [x] Integração com Banco de Dados e Sistema de Autenticação para Administrador
-- [ ] Testar Fluxo completo de ponta a ponto e Integrar os dois mundos.
+- [x] Testar Fluxo completo de ponta a ponto e Integrar os dois mundos.
 - [ ] Otimização para dispositivos móveis (Responsividade)
 - [ ] Expansão para múltiplos livros (Cidades, Itens e Facções)
 

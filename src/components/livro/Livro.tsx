@@ -6,10 +6,16 @@ import { CapaGrimorio } from "./CapaGrimorio";
 import { PaginaRaca } from "./PaginaRaca";
 import { ControlesNavegacao } from "./ControlesNavegacao";
 import { BarraFiltros } from "./BarraFiltros";
+import { Raca, Regiao } from "@/data/mockData";
 
-export default function Livro() {
+interface LivroProps {
+  racas: Raca[];
+  regioes: Regiao[];
+}
+
+export default function Livro({ racas, regioes }: LivroProps) {
   const { filtros, racasFiltradas, temFiltros, set, toggle, limpar } =
-    useFiltros();
+    useFiltros(racas);
 
   const {
     isOpen,
@@ -27,7 +33,7 @@ export default function Livro() {
     alternarNota,
     getNomeRaca,
     getNomeRegiao,
-  } = useLivro(racasFiltradas);
+  } = useLivro({ racasFiltradas, todasRacas: racas, regioes });
 
   if (!isOpen) {
     return <CapaGrimorio onOpen={abrirLivro} />;

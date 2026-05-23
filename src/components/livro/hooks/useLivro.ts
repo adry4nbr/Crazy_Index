@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Raca, mockRacas } from "@/data/mockData";
+import { Raca, Regiao } from "@/data/mockData";
 
 export type ActiveNote = {
   side: "left" | "right";
@@ -7,12 +7,25 @@ export type ActiveNote = {
   items: string[];
 } | null;
 
-export function useLivro(racas: Raca[] = mockRacas) {
+interface UseLivroParams {
+  // Lista já filtrada pelo useFiltros — controla o que aparece nas páginas
+  racasFiltradas: Raca[];
+  // Lista completa — usada para resolver nomes em aliancas/inimigos
+  todasRacas: Raca[];
+  // Lista de regioes — usada para resolver nomes de regioes_ids
+  regioes: Regiao[];
+}
+
+export function useLivro({
+  racasFiltradas,
+  todasRacas,
+  regioes,
+}: UseLivroParams) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [activeNote, setActiveNote] = useState<ActiveNote>(null);
 
-  const totalRacas = racas.length;
+  const totalRacas = racasFiltradas.length;
 
   // Garante que a página atual não ultrapasse o total filtrado
   const paginaSegura = Math.min(currentPage, Math.max(0, totalRacas - 1));
@@ -55,18 +68,22 @@ export function useLivro(racas: Raca[] = mockRacas) {
     setActiveNote(null);
   };
 
+  // Resolve o nome de uma raça pelo id — usa a lista completa (não a filtrada)
+  // para que aliados/inimigos apareçam corretamente mesmo quando filtrados
   const getNomeRaca = (id: string) =>
-    mockRacas.find((r) => r.id === id)?.nome ?? "Desconhecida";
+    todasRacas.find((r) => r.id === id)?.nome ?? "Desconhecida";
 
-  const getNomeRegiao = (id: string) => id;
+  // Resolve o nome de uma região pelo id
+  const getNomeRegiao = (id: string) =>
+    regioes.find((r) => r.id === id)?.nome ?? id;
 
   return {
     isOpen,
     currentPage: paginaSegura,
     activeNote,
     totalRacas,
-    racaEsquerda: racas[paginaSegura],
-    racaDireita: racas[paginaSegura + 1],
+    racaEsquerda: racasFiltradas[paginaSegura],
+    racaDireita: racasFiltradas[paginaSegura + 1],
     podVoltar: paginaSegura > 0,
     podAvancar: paginaSegura + 2 < totalRacas,
     abrirLivro,

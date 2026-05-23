@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import {
+  Raca,
   LongevidadeRaca,
   CategoriaRaca,
   OrigemRaca,
-  mockRacas,
 } from "@/data/mockData";
 
 export interface FiltrosState {
@@ -42,11 +42,13 @@ function toggleItem<T>(arr: T[], item: T): T[] {
   return arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item];
 }
 
-export function useFiltros() {
+// Recebe a lista completa de raças como parâmetro.
+// O componente pai (Livro) é responsável por fornecer os dados reais.
+export function useFiltros(racas: Raca[]) {
   const [filtros, setFiltros] = useState<FiltrosState>(FILTROS_VAZIOS);
 
   const racasFiltradas = useMemo(() => {
-    return mockRacas.filter((raca) => {
+    return racas.filter((raca) => {
       if (
         filtros.busca &&
         !raca.nome.toLowerCase().includes(filtros.busca.toLowerCase())
@@ -88,7 +90,7 @@ export function useFiltros() {
 
       return true;
     });
-  }, [filtros]);
+  }, [filtros, racas]);
 
   const set = <K extends keyof FiltrosState>(key: K, value: FiltrosState[K]) =>
     setFiltros((prev) => ({ ...prev, [key]: value }));
