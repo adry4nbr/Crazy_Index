@@ -1,3 +1,4 @@
+// index.tsx
 "use client";
 
 import Image from "next/image";
@@ -9,11 +10,9 @@ import {
   OrigemRaca,
   CategoriaRaca,
   LongevidadeRaca,
-  mockRacas,
-  mockRegioes,
+  Regiao, // 👈 Adicionamos a tipagem da Região aqui
 } from "@/data/mockData";
 
-// Importações dos seus sub-componentes
 import { Label, Input, Textarea, BotaoToggle } from "./FormUI";
 import { Relacionamentos } from "./Relacionamentos";
 import { Fraquezas } from "./Fraquezas";
@@ -64,7 +63,16 @@ const VAZIO: FormState = {
   fraquezas: {},
 };
 
-export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
+// 👇 NOVA INTERFACE PARA AS PROPS DO COMPONENTE
+export function RacaForm({
+  racaInicial,
+  todasRacas,
+  todasRegioes,
+}: {
+  racaInicial?: Raca;
+  todasRacas: Raca[];
+  todasRegioes: Regiao[];
+}) {
   const router = useRouter();
   const isEdicao = !!racaInicial;
 
@@ -155,8 +163,8 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
           : "Raça cadastrada com sucesso!",
       );
 
-      router.push("/admin"); // Redireciona de volta para o painel
-      router.refresh(); // Força o Next.js a recarregar os dados do Supabase
+      router.push("/admin");
+      router.refresh();
 
       if (!isEdicao) {
         setForm(VAZIO);
@@ -193,7 +201,6 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
       onSubmit={handleSubmit}
       className="max-w-2xl mx-auto bg-white border border-stone-200 rounded-xl shadow-sm p-8 space-y-8"
     >
-      {/* HEADER */}
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold text-stone-800 tracking-tight">
@@ -219,7 +226,6 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
         )}
       </div>
 
-      {/* DADOS BÁSICOS */}
       <div>
         <Label>Nome *</Label>
         <Input
@@ -252,7 +258,6 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
             Remover imagem
           </button>
         )}
-
         <input
           type="file"
           accept="image/*"
@@ -298,7 +303,6 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
         />
       </div>
 
-      {/* LISTAS E CATEGORIAS */}
       <div>
         <Label>Categorias</Label>
         <div className="flex flex-wrap gap-2">
@@ -312,10 +316,12 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
           ))}
         </div>
       </div>
+
+      {/* 👇 MÁGICA 1: USAR AS REGIÕES REAIS DA BASE DE DADOS */}
       <div>
         <Label>Regiões</Label>
         <div className="flex flex-wrap gap-2">
-          {mockRegioes.map((r) => (
+          {todasRegioes.map((r) => (
             <BotaoToggle
               key={r.id}
               label={r.nome}
@@ -326,23 +332,22 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
         </div>
       </div>
 
-      {/* RELACIONAMENTOS (Utilizando o componente refatorado) */}
+      {/* 👇 MÁGICA 2: USAR AS RAÇAS REAIS PARA ALIANÇAS E INIMIGOS */}
       <Relacionamentos
         titulo="Alianças"
         selecionadosIds={form.aliancas_ids}
-        mockRacas={mockRacas}
+        mockRacas={todasRacas}
         onToggle={(id) => toggleLista("aliancas_ids", id)}
         corHover="green"
       />
       <Relacionamentos
         titulo="Inimigos"
         selecionadosIds={form.inimigos_ids}
-        mockRacas={mockRacas}
+        mockRacas={todasRacas}
         onToggle={(id) => toggleLista("inimigos_ids", id)}
         corHover="red"
       />
 
-      {/* FRAQUEZAS (Utilizando o componente refatorado) */}
       <Fraquezas
         fraquezas={form.fraquezas as Record<string, string>}
         ativas={fraquezasAtivas}
@@ -356,7 +361,6 @@ export function RacaForm({ racaInicial }: { racaInicial?: Raca }) {
         }
       />
 
-      {/* FEEDBACK & BOTÕES */}
       {erro && (
         <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-md px-3 py-2">
           {erro}
