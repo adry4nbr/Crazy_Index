@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Raca, Regiao } from "@/data/mockData";
+import { playSound } from "@/utils/playSound";
 
 export type ActiveNote = {
   side: "left" | "right";
@@ -36,15 +37,26 @@ export function useLivro({
     items: string[],
   ) => {
     e.stopPropagation();
+
     if (activeNote?.side === side && activeNote?.title === title) {
+      playSound("/sounds/PapelMagicoClose.mp3", 0.65);
       setActiveNote(null);
     } else {
+      playSound("/sounds/PapelMagicoOpen.mp3", 0.65);
       setActiveNote({ side, title, items });
     }
   };
 
+  const fecharNota = useCallback(() => {
+    if (activeNote) {
+      playSound("/sounds/PapelMagicoClose.mp3", 0.65); // 🎵 Toca o som de sumir
+      setActiveNote(null);
+    }
+  }, [activeNote]);
+
   const avancarPagina = useCallback(() => {
     if (paginaSegura + 2 >= totalRacas || direcao) return;
+    playSound("/sounds/PaginaFlip.mp3", 0.45);
     setDirecao("avancar");
     setActiveNote(null);
     setTimeout(() => {
@@ -55,6 +67,7 @@ export function useLivro({
 
   const voltarPagina = useCallback(() => {
     if (paginaSegura - 2 < 0 || direcao) return;
+    playSound("/sounds/PaginaFlip.mp3", 0.45);
     setDirecao("voltar");
     setActiveNote(null);
     setTimeout(() => {
@@ -65,13 +78,14 @@ export function useLivro({
 
   const abrirLivro = () => {
     setCurrentPage(0);
-    setFechando(false); // NOVO
+    setFechando(false);
     setIsOpen(true);
   };
 
   // NOVO — aguarda animação antes de desmontar
   const fecharLivro = useCallback(() => {
     if (fechando) return;
+    playSound("/sounds/BookClose.wav", 0.7);
     setFechando(true);
     setActiveNote(null);
     setDirecao(null);
@@ -101,6 +115,7 @@ export function useLivro({
     podAvancar: paginaSegura + 2 < totalRacas && !direcao && !fechando, // NOVO !fechando
     abrirLivro,
     fecharLivro,
+    fecharNota,
     alternarNota,
     avancarPagina,
     voltarPagina,

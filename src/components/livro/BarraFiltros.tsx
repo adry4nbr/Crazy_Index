@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { playSound } from "@/utils/playSound";
 import {
   LongevidadeRaca,
   CategoriaRaca,
@@ -115,7 +116,15 @@ export function BarraFiltros({
     <>
       {/* Aba vertical — grudada na borda esquerda do livro */}
       <button
-        onClick={() => setAberto((v) => !v)}
+        onClick={() => {
+          if (aberto) {
+            playSound("/sounds/Filtro.wav", 0.3);
+          } else {
+            playSound("/sounds/Filtro.wav", 0.3);
+          }
+
+          setAberto((v) => !v);
+        }}
         className="absolute left-0 top-6 -translate-x-full z-50 bg-[#1a0e0a] border border-[#3a2518] border-r-0 rounded-l-md px-1.5 py-3 flex flex-col items-center gap-2 hover:bg-[#2c1a0e] transition-colors cursor-pointer"
       >
         <span

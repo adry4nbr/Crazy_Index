@@ -7,6 +7,8 @@ import { PaginaRaca } from "./PaginaRaca";
 import { ControlesNavegacao } from "./ControlesNavegacao";
 import { BarraFiltros } from "./BarraFiltros";
 import { Raca, Regiao } from "@/data/mockData";
+import { useEffect } from "react"; // 1. Garanta que o useEffect está importado
+import { preloadSound } from "@/utils/playSound";
 
 interface LivroProps {
   racas: Raca[];
@@ -50,6 +52,14 @@ function PaginaVazia() {
 }
 
 export default function Livro({ racas, regioes }: LivroProps) {
+  useEffect(() => {
+    preloadSound("/sounds/BookOpen.wav");
+    preloadSound("/sounds/BookClose.wav");
+    preloadSound("/sounds/Filtro.wav");
+    preloadSound("/sounds/PaginaFlip.mp3");
+    preloadSound("/sounds/PapelMagicoClose.mp3");
+    preloadSound("/sounds/PapelMagicoOpen.mp3");
+  }, []);
   const { filtros, racasFiltradas, temFiltros, set, toggle, limpar } =
     useFiltros(racas);
 
@@ -67,7 +77,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
     fecharLivro,
     avancarPagina,
     voltarPagina,
-    limparNota,
+    fecharNota,
     alternarNota,
     getNomeRaca,
     getNomeRegiao,
@@ -79,7 +89,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
 
   return (
     <div
-      onClick={limparNota}
+      onClick={fecharNota}
       className="flex flex-col items-center animate-fade-in font-['IM_Fell_English'] selection:bg-[#a42b2b]/20"
     >
       <div className="relative">
@@ -122,7 +132,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
 
               {/* Página direita fechando */}
               <div className="pagina-fechar-dir fechando-ativa">
-                <div className="p-8 pl-10 pb-6 h-full">
+                <div className=" p-8 pl-10 pb-6 h-full">
                   {racaDireita && (
                     <PaginaRaca
                       raca={racaDireita}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { playSound } from "@/utils/playSound";
 
 type CapaGrimorioProps = {
   onOpen: () => void;
@@ -11,6 +12,9 @@ export function CapaGrimorio({ onOpen }: CapaGrimorioProps) {
 
   const handleClick = () => {
     if (abrindo) return;
+    setTimeout(() => {
+      playSound("/sounds/BookOpen.wav", 0.65);
+    }, 100);
     setAbrindo(true);
     setTimeout(onOpen, 900);
   };
@@ -81,14 +85,14 @@ export function CapaGrimorio({ onOpen }: CapaGrimorioProps) {
 
             {/* Runas */}
             <div className="absolute bottom-20 left-11 right-3.5 text-center">
-              <div className="font-['Cinzel'] text-[8px] text-[#2e1a0e] tracking-[2px] opacity-50">
+              <div className="font-['Cinzel'] text-[8px] text-[#422715] tracking-[2px] opacity-50">
                 ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ
               </div>
             </div>
 
             {/* Dica pulsante */}
             <div
-              className="absolute bottom-6 left-12.5 right-5 text-center font-['IM_Fell_English'] text-[10px] text-[#3a2518] italic"
+              className="absolute bottom-6 left-12.5 right-5 text-center font-['IM_Fell_English'] text-[10px] text-[#7f5236] italic"
               style={{
                 animation: abrindo
                   ? "none"
