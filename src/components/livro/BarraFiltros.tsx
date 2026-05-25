@@ -5,8 +5,8 @@ import {
   LongevidadeRaca,
   CategoriaRaca,
   OrigemRaca,
-  mockRacas,
-  mockRegioes,
+  Raca,
+  Regiao,
 } from "@/data/mockData";
 import { FiltrosState } from "./hooks/useFiltros";
 
@@ -92,6 +92,8 @@ type Props = {
   onBusca: (valor: string) => void;
   onLimpar: () => void;
   totalEncontrado: number;
+  todasRacas: Raca[];
+  regioes: Regiao[];
 };
 
 export function BarraFiltros({
@@ -101,9 +103,13 @@ export function BarraFiltros({
   onBusca,
   onLimpar,
   totalEncontrado,
+  todasRacas,
+  regioes,
 }: Props) {
+  // false = fechado por padrão
   const [aberto, setAberto] = useState(false);
-  const todasRacas = mockRacas.map((r) => ({ id: r.id, nome: r.nome }));
+
+  const racasParaFiltro = todasRacas.map((r) => ({ id: r.id, nome: r.nome }));
 
   return (
     <>
@@ -116,19 +122,24 @@ export function BarraFiltros({
           className="font-['Cinzel'] text-[9px] tracking-[2px] uppercase text-[#cdb394] select-none"
           style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
-          {aberto ? "Índice & Filtros" : "✕ Fechar"}
+          {aberto ? "✕ Fechar" : "Índice & Filtros"}
         </span>
         {temFiltros && !aberto && (
           <span className="w-1.5 h-1.5 rounded-full bg-[#a42b2b]" />
         )}
       </button>
 
-      {/* Painel — fixed, desliza da esquerda */}
+      {/* Painel — fixed, desliza levemente e desaparece
+          fechado: translateX(-50%) + opacidade 0 (invisível e intocável)
+          aberto:  translateX(0) + opacidade 1 (visível e interativo)
+      */}
       <div
-        className="fixed top-0 left-0 z-40 h-screen bg-[#120a06] border-r border-[#3a2518] transition-all duration-300 ease-in-out flex flex-col overflow-hidden"
+        className="fixed top-0 left-0 z-40 h-screen bg-[#120a06] border-r border-[#3a2518] transition-all duration-300 ease-in-out flex flex-col"
         style={{
           width: "340px",
-          transform: aberto ? "translateX(-100%)" : "translateX(0)",
+          transform: aberto ? "translateX(0)" : "translateX(50%)",
+          opacity: aberto ? 1 : 0,
+          pointerEvents: aberto ? "auto" : "none",
         }}
       >
         <div className="w-85 h-full flex flex-col pt-8 px-5 pb-5 gap-4">
@@ -144,8 +155,7 @@ export function BarraFiltros({
               onChange={(e) => onBusca(e.target.value)}
               className="w-80% bg-[#0d0806] border border-[#3a2518] rounded px-2.5 py-1.5 text-[12px] text-[#cdb394] placeholder:text-[#4a321a] focus:outline-none focus:border-[#8b2020] font-['IM_Fell_English']"
             />
-            {/* Contador + limpar — abaixo do input */}
-            <div className="flex items-center j gap-3 mt-2">
+            <div className="flex items-center gap-3 mt-2">
               <span className="text-[12px] text-[#4a321a] font-['Cinzel']">
                 {totalEncontrado} raça{totalEncontrado !== 1 ? "s" : ""}{" "}
                 encontrada{totalEncontrado !== 1 ? "s" : ""}
@@ -163,7 +173,7 @@ export function BarraFiltros({
 
           <div className="w-full h-px bg-[#3a2518]/50 shrink-0" />
 
-          {/* Grid 2 colunas — sem scroll */}
+          {/* Grid 2 colunas */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-4 content-start overflow-hidden flex-1">
             <Secao titulo="Longevidade">
               {LONGEVIDADES.map((l) => (
@@ -199,7 +209,7 @@ export function BarraFiltros({
             </Secao>
 
             <Secao titulo="Regiões">
-              {mockRegioes.map((r) => (
+              {regioes.map((r) => (
                 <Chip
                   key={r.id}
                   label={r.nome}
@@ -210,7 +220,7 @@ export function BarraFiltros({
             </Secao>
 
             <Secao titulo="Alianças">
-              {todasRacas.map((r) => (
+              {racasParaFiltro.map((r) => (
                 <Chip
                   key={r.id}
                   label={r.nome}
@@ -221,7 +231,7 @@ export function BarraFiltros({
             </Secao>
 
             <Secao titulo="Inimigos">
-              {todasRacas.map((r) => (
+              {racasParaFiltro.map((r) => (
                 <Chip
                   key={r.id}
                   label={r.nome}

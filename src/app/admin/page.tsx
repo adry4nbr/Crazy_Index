@@ -48,7 +48,8 @@ export default async function AdminPage() {
               Nenhuma raça cadastrada ainda.
             </div>
           ) : (
-            <ul className="divide-y divide-stone-100">
+            // max-h + overflow-y: scroll aparece automaticamente a partir de ~8 itens
+            <ul className="divide-y divide-stone-100 max-h-[420px] overflow-y-auto">
               {racas.map((raca) => (
                 <li
                   key={raca.id}
@@ -113,7 +114,8 @@ export default async function AdminPage() {
               Nenhuma região cadastrada ainda.
             </div>
           ) : (
-            <ul className="divide-y divide-stone-100">
+            // max-h + overflow-y: scroll aparece a partir de ~6 itens
+            <ul className="divide-y divide-stone-100 max-h-[300px] overflow-y-auto">
               {regioes.map((regiao) => (
                 <li
                   key={regiao.id}

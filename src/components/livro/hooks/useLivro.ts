@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Raca, Regiao } from "@/data/mockData";
 
 export type ActiveNote = {
@@ -7,12 +7,11 @@ export type ActiveNote = {
   items: string[];
 } | null;
 
+export type DirecaoFlip = "avancar" | "voltar" | null;
+
 interface UseLivroParams {
-  // Lista já filtrada pelo useFiltros — controla o que aparece nas páginas
   racasFiltradas: Raca[];
-  // Lista completa — usada para resolver nomes em aliancas/inimigos
   todasRacas: Raca[];
-  // Lista de regioes — usada para resolver nomes de regioes_ids
   regioes: Regiao[];
 }
 
@@ -24,10 +23,10 @@ export function useLivro({
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [activeNote, setActiveNote] = useState<ActiveNote>(null);
+  const [direcao, setDirecao] = useState<DirecaoFlip>(null);
+  const [fechando, setFechando] = useState(false); // NOVO
 
   const totalRacas = racasFiltradas.length;
-
-  // Garante que a página atual não ultrapasse o total filtrado
   const paginaSegura = Math.min(currentPage, Math.max(0, totalRacas - 1));
 
   const alternarNota = (
@@ -44,36 +43,48 @@ export function useLivro({
     }
   };
 
-  const avancarPagina = () => {
-    if (paginaSegura + 2 < totalRacas) {
+  const avancarPagina = useCallback(() => {
+    if (paginaSegura + 2 >= totalRacas || direcao) return;
+    setDirecao("avancar");
+    setActiveNote(null);
+    setTimeout(() => {
       setCurrentPage((p) => p + 2);
-      setActiveNote(null);
-    }
-  };
+      setDirecao(null);
+    }, 350);
+  }, [paginaSegura, totalRacas, direcao]);
 
-  const voltarPagina = () => {
-    if (paginaSegura - 2 >= 0) {
+  const voltarPagina = useCallback(() => {
+    if (paginaSegura - 2 < 0 || direcao) return;
+    setDirecao("voltar");
+    setActiveNote(null);
+    setTimeout(() => {
       setCurrentPage((p) => p - 2);
-      setActiveNote(null);
-    }
-  };
+      setDirecao(null);
+    }, 350);
+  }, [paginaSegura, direcao]);
 
   const abrirLivro = () => {
     setCurrentPage(0);
+    setFechando(false); // NOVO
     setIsOpen(true);
   };
 
-  const fecharLivro = () => {
-    setIsOpen(false);
+  // NOVO — aguarda animação antes de desmontar
+  const fecharLivro = useCallback(() => {
+    if (fechando) return;
+    setFechando(true);
     setActiveNote(null);
-  };
+    setDirecao(null);
+    setTimeout(() => {
+      setIsOpen(false);
+      setFechando(false);
+      setCurrentPage(0);
+    }, 500);
+  }, [fechando]);
 
-  // Resolve o nome de uma raça pelo id — usa a lista completa (não a filtrada)
-  // para que aliados/inimigos apareçam corretamente mesmo quando filtrados
   const getNomeRaca = (id: string) =>
     todasRacas.find((r) => r.id === id)?.nome ?? "Desconhecida";
 
-  // Resolve o nome de uma região pelo id
   const getNomeRegiao = (id: string) =>
     regioes.find((r) => r.id === id)?.nome ?? id;
 
@@ -81,11 +92,13 @@ export function useLivro({
     isOpen,
     currentPage: paginaSegura,
     activeNote,
+    direcao,
+    fechando, // NOVO
     totalRacas,
     racaEsquerda: racasFiltradas[paginaSegura],
     racaDireita: racasFiltradas[paginaSegura + 1],
-    podVoltar: paginaSegura > 0,
-    podAvancar: paginaSegura + 2 < totalRacas,
+    podVoltar: paginaSegura > 0 && !direcao && !fechando, // NOVO !fechando
+    podAvancar: paginaSegura + 2 < totalRacas && !direcao && !fechando, // NOVO !fechando
     abrirLivro,
     fecharLivro,
     alternarNota,

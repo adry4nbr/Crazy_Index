@@ -5,13 +5,6 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -23,4 +16,238 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes pulse-text {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes book-open {
+  0% {
+    transform: perspective(1200px) rotateY(0deg) scaleX(1);
+    opacity: 1;
+  }
+  40% {
+    transform: perspective(1200px) rotateY(-25deg) scaleX(0.97);
+    opacity: 0.9;
+  }
+  70% {
+    transform: perspective(1200px) rotateY(-55deg) scaleX(0.9);
+    opacity: 0.6;
+  }
+  100% {
+    transform: perspective(1200px) rotateY(-90deg) scaleX(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes page-flip {
+  0% {
+    opacity: 0;
+    transform: perspective(900px) rotateY(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+    transform: perspective(900px) rotateY(-90deg);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(900px) rotateY(-180deg);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      12px 12px 40px rgba(0, 0, 0, 0.9),
+      inset 0 0 60px rgba(0, 0, 0, 0.7);
+  }
+  50% {
+    box-shadow:
+      12px 12px 60px rgba(139, 32, 32, 0.4),
+      0 0 40px rgba(139, 32, 32, 0.2),
+      inset 0 0 60px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.capa-livro {
+  transform-origin: left center;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+.capa-livro.abrindo {
+  animation: book-open 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+.pagina-fantasma {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-origin: left center;
+  pointer-events: none;
+  opacity: 0;
+}
+.abrindo .pagina-fantasma:nth-child(1) {
+  background: #c8a97a;
+  animation: page-flip 0.35s ease-in-out 0.35s forwards;
+}
+.abrindo .pagina-fantasma:nth-child(2) {
+  background: #d4b88a;
+  animation: page-flip 0.35s ease-in-out 0.5s forwards;
+}
+.abrindo .pagina-fantasma:nth-child(3) {
+  background: #dcc49a;
+  animation: page-flip 0.35s ease-in-out 0.65s forwards;
+}
+
+/* ── Animação de virar página ── */
+
+/* =========================
+   FLIP REALISTA
+========================= */
+
+@keyframes flip-avancar {
+  0% {
+    transform: perspective(2000px) rotateY(160deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    transform: perspective(2000px) rotateY(70deg);
+    box-shadow: 30px 0 40px rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    transform: perspective(2000px) rotateY(0deg);
+    box-shadow: 50px 0 60px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@keyframes flip-voltar {
+  0% {
+    transform: perspective(2000px) rotateY(0deg);
+    box-shadow: 50px 0 60px rgba(0, 0, 0, 0.35);
+  }
+  50% {
+    transform: perspective(2000px) rotateY(70deg);
+    box-shadow: 30px 0 40px rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    transform: perspective(2000px) rotateY(160deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+/* Overlay da página que vira */
+.pagina-flip-overlay {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 50;
+  background: #cdb394;
+  overflow: hidden;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+/* Página esquerda */
+.flip-voltar {
+  transform-origin: right center;
+  animation: flip-voltar 1s ease-in-out forwards;
+}
+
+/* Página direita */
+.flip-avancar {
+  transform-origin: right center;
+  animation: flip-avancar 1s ease-in-out forwards;
+}
+
+.flip-conteudo {
+  width: 100%;
+  height: 100%;
+}
+
+.flip-avancar .flip-conteudo {
+  transform: rotateY(180deg);
+}
+
+/* ── Animação de fechar o livro ── */
+
+/* Fechar — esquerda vira para fora (para a esquerda) */
+@keyframes fechar-pag-esq {
+  0% {
+    transform: perspective(2000px) rotateY(0deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    transform: perspective(2000px) rotateY(45deg);
+    box-shadow: -30px 0 40px rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    transform: perspective(2000px) rotateY(90deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+/* Fechar — direita vira para fora (para a direita) */
+@keyframes fechar-pag-dir {
+  0% {
+    transform: perspective(2000px) rotateY(0deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    transform: perspective(2000px) rotateY(-45deg);
+    box-shadow: 30px 0 40px rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    transform: perspective(2000px) rotateY(-90deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.pagina-fechar-esq {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: #cdb394;
+  transform-origin: right center;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+.pagina-fechar-dir {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background: #cdb394;
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+.pagina-fechar-esq.fechando-ativa {
+  animation: fechar-pag-esq 0.5s ease-in-out forwards;
+}
+
+.pagina-fechar-dir.fechando-ativa {
+  animation: fechar-pag-dir 0.5s ease-in-out forwards;
 }

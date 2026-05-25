@@ -1,15 +1,13 @@
 "use client";
 
-import { mockRacas } from "@/data/mockData";
+import { Raca } from "@/data/mockData";
 import { ActiveNote } from "./hooks/useLivro";
 import { PapelMagico } from "./PapelMagico";
 import { SecaoFraquezas } from "./SecaoFraquezas";
 import { LinhaInfo } from "./LinhaInfo";
 
-type RacaType = (typeof mockRacas)[number];
-
 type PaginaRacaProps = {
-  raca: RacaType | undefined;
+  raca: Raca | undefined;
   pageNum: number;
   side: "left" | "right";
   activeNote: ActiveNote;
@@ -22,6 +20,36 @@ type PaginaRacaProps = {
   getNomeRaca: (id: string) => string;
   getNomeRegiao: (id: string) => string;
 };
+
+// Rasgo de garra — SVG inline com marcas de arranhão e buracos na página
+function RasgosGarra() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <svg
+        viewBox="0 0 300 500"
+        className="w-full h-full"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Manchas de cor da capa — como o papel se dobrou expondo a capa */}
+
+        {/* Pontos de tinta espalhados */}
+        <circle cx="55" cy="295" r="2.5" fill="rgba(20,8,2,0.35)" />
+        <circle cx="220" cy="145" r="1.8" fill="rgba(20,8,2,0.30)" />
+        <circle cx="240" cy="300" r="3" fill="rgba(20,8,2,0.25)" />
+        <circle cx="45" cy="180" r="2" fill="rgba(20,8,2,0.28)" />
+        <circle cx="255" cy="220" r="1.5" fill="rgba(20,8,2,0.22)" />
+        <circle cx="100" cy="280" r="2.5" fill="rgba(20,8,2,0.35)" />
+        <circle cx="20" cy="10" r="5" fill="rgba(20,8,2,0.30)" />
+        <circle cx="78" cy="30" r="3" fill="rgba(20,8,2,0.25)" />
+        <circle cx="300" cy="55" r="2" fill="rgba(20,8,2,0.28)" />
+        <circle cx="25" cy="120" r="4" fill="rgba(20,8,2,0.22)" />
+        <circle cx="200" cy="400" r="3" fill="rgba(20,8,2,0.25)" />
+        <circle cx="150" cy="350" r="2" fill="rgba(20,8,2,0.28)" />
+        <circle cx="70" cy="450" r="5" fill="rgba(20,8,2,0.22)" />
+      </svg>
+    </div>
+  );
+}
 
 export function PaginaRaca({
   raca,
@@ -36,8 +64,15 @@ export function PaginaRaca({
 
   if (!raca) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-[#4a331e] opacity-40 font-['IM_Fell_English'] text-xl italic text-center p-12">
-        As páginas seguintes foram arrancadas ou consumidas pelo tempo...
+      <div className="relative flex flex-col items-center justify-center h-full text-[#4a331e] font-['IM_Fell_English'] text-center select-none overflow-hidden">
+        <RasgosGarra />
+        <div className="relative z-10 flex flex-col items-center gap-3 px-8 opacity-60">
+          <span className="text-[32px] leading-none">✦</span>
+          <p className="text-lg italic leading-relaxed">
+            As páginas seguintes foram arrancadas...
+          </p>
+          <p className="text-sm opacity-70">ou consumidas por algo antigo.</p>
+        </div>
       </div>
     );
   }
@@ -79,12 +114,20 @@ export function PaginaRaca({
 
         {/* Imagem e Descrição */}
         <div className="flex gap-4 items-start mt-1 shrink-0">
-          <div className="w-32 h-38 shrink-0 border border-[#4a321a]/70 bg-stone-950/15 relative flex flex-col items-center justify-center rounded shadow-xs">
-            <div className="absolute inset-0.5 border border-[#4a321a]/20 border-dashed" />
-            <span className="text-[10px] tracking-widest font-bold text-[#4a321a]/80 uppercase font-['Cinzel']">
-              Gravura
-            </span>
-          </div>
+          {raca.imagem_url ? (
+            <img
+              src={raca.imagem_url}
+              alt={raca.nome}
+              className="w-32 h-38 shrink-0 border border-[#4a321a]/70 rounded shadow-xs object-cover"
+            />
+          ) : (
+            <div className="w-32 h-38 shrink-0 border border-[#4a321a]/70 bg-stone-950/15 relative flex flex-col items-center justify-center rounded shadow-xs">
+              <div className="absolute inset-0.5 border border-[#4a321a]/20 border-dashed" />
+              <span className="text-[10px] tracking-widest font-bold text-[#4a321a]/80 uppercase font-['Cinzel']">
+                Gravura
+              </span>
+            </div>
+          )}
           <p className="flex-1 text-[14.5px] leading-relaxed text-[#170a03] italic text-justify">
             {raca.descricao ||
               "Nenhum relato escrito foi encontrado sobre esta criatura nos arquivos antigos."}
