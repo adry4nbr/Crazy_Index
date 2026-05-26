@@ -1,96 +1,403 @@
-# 📚 Crazy Index
+````md
+# 📖 Crazy Index
 
-O **Crazy Index** é um indexador interativo e enciclopédia digital voltada para universos de RPG e fantasia. O projeto foi idealizado para funcionar visualmente como um antigo livro mágico de registros, onde o usuário pode abrir a capa, folhear as páginas e navegar pela lore de forma totalmente fluida.
+> Um grimório interativo de raças fictícias com sistema de administração, filtros dinâmicos e navegação imersiva em formato de livro.
 
-Esta aplicação foi desenvolvida com foco em **escalabilidade**, permitindo que novos livros (Bestiários, Guias de Cidades, Itens Mágicos) sejam adicionados facilmente no futuro através de uma arquitetura de dados fortemente tipada.
+---
+
+## 🚀 Sobre o Projeto
+
+O **Crazy Index** é uma aplicação web construída para funcionar como um grande índice/grimório de raças fictícias, permitindo visualizar informações detalhadas, alianças, fraquezas, regiões e categorias de cada raça através de uma interface totalmente inspirada em livros mágicos.
+
+O projeto foi desenvolvido utilizando **Next.js + Supabase**, com foco em:
+
+- Experiência visual imersiva
+- Organização escalável
+- Sistema administrativo protegido
+- Navegação dinâmica
+- Estrutura modular e reutilizável
 
 ---
 
-## 🚀 Funcionalidades Principais
+# 🖼️ Preview
 
-- **📖 Interface Estilo Livro:** Navegação visual imersiva que simula a abertura de capas e o passar de páginas físicas.
-- **🧠 Dados Altamente Estruturados:** Arquitetura inteligente que gerencia o cruzamento de dados complexos como Regiões, Sub-regiões e Categorias de raças.
-- **🔀 Navegação Cruzada (Wiki Style):** Sistema de links autorreferenciáveis onde clicar em uma Aliança ou Inimigo direciona o leitor imediatamente para a página daquela raça.
-- **⚡ Filtros Avançados Dinâmicos:** Filtros do tipo funil lógico (AND) que permitem cruzar categorias e localizações simultaneamente sem quebrar a paginação.
-- **🛡️ Seção Administrativa Protegida:** Painel seguro para gerenciamento de conteúdo (CRUD de Raças e Regiões) através da rota restrita `/admin`.
+## 📚 Interface do Livro
+
+- Navegação estilo grimório
+- Efeito de paginação
+- Sistema de filtros
+- Layout responsivo
+- Modo mobile adaptado
 
 ---
+
+# ⚙️ Informações Técnicas
 
 ## 🛠️ Stack Tecnológica
 
-O projeto utiliza o que há de mais moderno no ecossistema de desenvolvimento web Full-Stack:
+### Front-end
 
-- **Framework:** [Next.js](https://nextjs.org/) (App Router)
-- **Linguagem:** [TypeScript](https://www.typescript.org/) (Garantindo tipagem estrita e contratos de dados seguros)
-- **Estilização:** [Tailwind CSS v4](https://tailwindcss.com/) (Estilização utilitária de alta performance)
-- **Banco de Dados & Autenticação (Futuro):** Supabase / Firebase (Backend as a Service)
+- Next.js (App Router)
+- React
+- TypeScript
+
+### Estilização
+
+- Tailwind CSS
+
+### Back-end & Banco de Dados
+
+- Supabase
+
+### Outras Ferramentas
+
+- Middleware de autenticação
+- API Routes
+- Hooks customizados
+- Sistema de áudio
 
 ---
 
-## 📦 Estrutura de Pastas Relevante
+# 🔐 Regras de Acesso e Segurança
 
-```text
-crazy-index/
-├── src/
-│   ├── app/
-│   │   ├── globals.css      # Estilos globais (Tailwind v4)
-│   │   ├── layout.tsx       # Layout base da aplicação
-│   │   └── page.tsx         # Página inicial (Capa do Livro)
-│   └── data/
-│       └── mockData.ts      # Contratos (Interfaces TS) e dados de teste iniciais
+## 👥 Público Geral
+
+Possui apenas permissão de leitura (`GET`).
+
+Os usuários podem:
+
+- Abrir o livro
+- Folhear páginas
+- Utilizar filtros
+- Pesquisar raças
+- Visualizar regiões e informações
+
+---
+
+## 👑 Administrador
+
+Acesso exclusivo através da rota oculta:
+
+```bash
+/admin
+```
+````
+
+O administrador possui permissões de:
+
+- POST
+- PUT
+- DELETE
+
+Permitindo:
+
+- Adicionar raças
+- Editar raças
+- Remover raças
+- Gerenciar regiões
+
+---
+
+# 🧬 Modelagem do Sistema
+
+# 🌍 Entidade: Região
+
+| Campo       | Tipo            |
+| ----------- | --------------- |
+| id          | Texto           |
+| nome        | Texto           |
+| sub_regioes | Lista de textos |
+
+### Exemplos
+
+```json
+{
+  "nome": "Futurista",
+  "sub_regioes": ["Cyberpunk", "Steampunk"]
+}
+```
+
+---
+
+# 👤 Entidade: Raça
+
+| Campo       | Tipo            |
+| ----------- | --------------- |
+| id          | Texto           |
+| nome        | Texto           |
+| origem      | Opção única     |
+| idade_media | Texto/Número    |
+| imagem      | URL             |
+| descricao   | Texto longo     |
+| aliancas    | Lista de IDs    |
+| inimigos    | Lista de IDs    |
+| categoria   | Lista de opções |
+| regioes_ids | Lista de IDs    |
+| fraquezas   | Objeto dinâmico |
+
+---
+
+## 🧪 Tipos de Origem
+
+- Natural
+- Artificial
+- Maldição
+- Extraterrestre
+
+---
+
+## 🏷️ Categorias
+
+- Terrestre
+- Aéreo
+- Elemental
+- Mágico
+- Astral
+- Aquático
+- Infernal
+- Celestial
+- Divino
+- Extinto
+- ???
+
+---
+
+## ☠️ Sistema de Fraquezas
+
+Cada raça pode possuir fraquezas específicas:
+
+- Física
+- Mágica
+- Astral
+
+O formulário é dinâmico:
+ao selecionar o tipo de fraqueza, o campo correspondente é liberado para preenchimento.
+
+---
+
+# 📂 Estrutura de Pastas
+
+```bash
+CRAZY-INDEX
+├── .next
+├── node_modules
+├── public
+│   └── sounds
+│
+├── src
+│   ├── app
+│   │   ├── admin
+│   │   │   ├── login
+│   │   │   │   └── page.tsx
+│   │   │   │
+│   │   │   ├── racas
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── nova
+│   │   │   │       └── page.tsx
+│   │   │   │
+│   │   │   ├── regioes
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── nova
+│   │   │   │       └── page.tsx
+│   │   │   │
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── api
+│   │   │   ├── racas
+│   │   │   │   └── route.ts
+│   │   │   └── regioes
+│   │   │       └── route.ts
+│   │   │
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   │
+│   ├── components
+│   │   ├── admin
+│   │   │   └── RacaForm
+│   │   │       ├── FormUI.tsx
+│   │   │       ├── Fraquezas.tsx
+│   │   │       ├── index.tsx
+│   │   │       ├── Relacionamentos.tsx
+│   │   │       └── RegiaoForm.tsx
+│   │   │
+│   │   └── livro
+│   │       ├── hooks
+│   │       │   ├── useFiltros.ts
+│   │       │   └── useLivro.ts
+│   │       │
+│   │       ├── BarraFiltros.tsx
+│   │       ├── CapaGrimorio.tsx
+│   │       ├── ControlesNavegacao.tsx
+│   │       ├── LinhaInfo.tsx
+│   │       ├── Livro.tsx
+│   │       ├── LivroMobile.tsx
+│   │       ├── PaginaRaca.tsx
+│   │       ├── PaginaRacaMobile.tsx
+│   │       ├── PapelMagico.tsx
+│   │       └── SecaoFraquezas.tsx
+│   │
+│   ├── data
+│   │   └── mockData.ts
+│   │
+│   ├── lib
+│   │   ├── auth-guard.ts
+│   │   ├── data.ts
+│   │   └── supabase.ts
+│   │
+│   └── utils
+│       └── playSound.ts
+│
+├── .env.local
+├── .gitignore
+├── eslint.config.mjs
+├── LICENSE.txt
+├── middleware.ts
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
 ├── README.md
-└── package.json
-
+└── tsconfig.json
 ```
 
 ---
 
-## 🔧 Como Executar o Projeto Localmente
+# ✨ Funcionalidades
 
-Para clonar e rodar esta aplicação no seu computador, você precisará do [Git](https://git-scm.com) e do [Node.js](https://nodejs.org/) instalados.
+## 📖 Sistema de Livro Interativo
 
-1. **Clone o repositório:**
+- Navegação entre páginas
+- Renderização dinâmica
+- Experiência imersiva
+
+## 🔎 Sistema de Filtros
+
+- Busca por categorias
+- Busca por logenvidade
+- Busca por regiões
+- Busca por origem
+- Busca Por aliados e inimigos
+- Filtros dinâmicos
+
+## 📱 Responsividade
+
+- Layout adaptado para mobile
+- Livro separado para dispositivos móveis
+
+## 🔊 Sistema de Sons
+
+- Reprodução de áudio durante interações
+
+## 🔐 Sistema Administrativo
+
+- Login protegido
+- Controle de acesso
+- CRUD completo
+
+---
+
+# 🧠 Arquitetura do Projeto
+
+O projeto foi organizado utilizando separação modular baseada em responsabilidades:
+
+- `components/` → Componentes reutilizáveis
+- `hooks/` → Regras de negócio e estado
+- `lib/` → Integrações e serviços
+- `app/` → Rotas da aplicação
+- `utils/` → Funções auxiliares
+- `data/` → Dados mockados
+
+---
+
+# 🚀 Como Rodar o Projeto
+
+## Clone o repositório
 
 ```bash
-git clone [https://github.com/seu-usuario/crazy-index.git](https://github.com/seu-usuario/crazy-index.git)
-
+git clone https://github.com/adry4nbr/Crazy_Index.git
 ```
 
-2. **Entre na pasta do projeto:**
+---
+
+## Acesse a pasta
 
 ```bash
-cd crazy-index
-
+cd Crazy_Index
 ```
 
-3. **Instale as dependências:**
+---
+
+## Instale as dependências
 
 ```bash
 npm install
-
 ```
-
-4. **Inicie o servidor de desenvolvimento:**
-
-```bash
-npm run dev
-
-```
-
-5. Abra o seu navegador e acesse **`http://localhost:3000`** para ver o projeto rodando.
 
 ---
 
-## 🗺️ Roadmap de Desenvolvimento
+## Configure o ambiente
 
-- [x] Setup do projeto Next.js com TypeScript e Tailwind v4
-- [x] Modelagem do contrato de dados (`mockData.ts`)
-- [x] Desenvolvimento da interface e efeito de passar páginas (Front-end Estático)
-- [x] Implementação da lógica de filtros avançados
-- [x] Integração com Banco de Dados e Sistema de Autenticação para Administrador
-- [x] Testar Fluxo completo de ponta a ponto e Integrar os dois mundos.
-- [ ] Otimização para dispositivos móveis (Responsividade)
-- [ ] Expansão para múltiplos livros (Cidades, Itens e Facções)
+Crie um arquivo:
+
+```bash
+.env.local
+```
+
+E adicione suas credenciais do Supabase.
+
+---
+
+## Rode o projeto
+
+```bash
+npm run dev
+```
+
+---
+
+# 🌐 Repositório
+
+🔗 GitHub:
+[https://github.com/adry4nbr/Crazy_Index](https://github.com/adry4nbr/Crazy_Index)
+
+---
+
+# 🌍 Deploy
+
+🔗 Deploy em produção:
+
+```bash
+Em breve...
+```
+
+---
+
+# 📌 Futuras Melhorias
+
+- Livro das Regiões
+- Livro das Armas
+- Livro ...
+
+---
+
+# 📄 Licença
+
+Este projeto está sob a licença presente em:
+
+```bash
+LICENSE.txt
+```
+
+---
+
+# 👨‍💻 Autor
+
+Desenvolvido por **Adryan Galdino Soares** 🚀
 
 ```
 
