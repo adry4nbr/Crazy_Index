@@ -81,7 +81,7 @@ export function PaginaRacaMobile({
           <h2 className="font-['Cinzel'] text-2xl font-extrabold text-[#210f05] tracking-wide leading-tight mt-0.5">
             {raca.nome}
           </h2>
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-[#4a321a]/40 to-transparent relative mt-2">
+          <div className="w-full h-px bg-linear-to-r from-transparent via-[#4a321a]/40 to-transparent relative mt-2">
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-[#4a321a] bg-[#cdb394] px-2">
               ✧
             </span>
@@ -116,7 +116,7 @@ export function PaginaRacaMobile({
         <div className="w-full h-px bg-[#4a321a]/25 my-4 shrink-0" />
 
         {/* ── ESPAÇADOR: Empurra as informações para o fundo ─────────────── */}
-        <div className="flex-1 min-h-[1rem]" />
+        <div className="flex-1 min-h-4" />
 
         {/* ── Infos Inferiores (Fixas na base) ───────────────────────────── */}
         <div className="relative shrink-0 flex flex-col gap-2">
