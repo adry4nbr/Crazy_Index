@@ -49,13 +49,14 @@ export function useLivro({
 
   const fecharNota = useCallback(() => {
     if (activeNote) {
-      playSound("/sounds/PapelMagicoClose.mp3", 0.65); // 🎵 Toca o som de sumir
+      playSound("/sounds/PapelMagicoClose.mp3", 0.3); // 🎵 Toca o som de sumir
       setActiveNote(null);
     }
   }, [activeNote]);
 
   const avancarPagina = useCallback(() => {
     if (paginaSegura + 2 >= totalRacas || direcao) return;
+    playSound("/sounds/PaginaFlip.mp3", 0.45);
     setDirecao("avancar");
     setActiveNote(null);
     setTimeout(() => {
@@ -66,6 +67,7 @@ export function useLivro({
 
   const voltarPagina = useCallback(() => {
     if (paginaSegura - 2 < 0 || direcao) return;
+    playSound("/sounds/PaginaFlip.mp3", 0.45);
     setDirecao("voltar");
     setActiveNote(null);
     setTimeout(() => {

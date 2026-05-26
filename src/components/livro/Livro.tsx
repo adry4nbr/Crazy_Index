@@ -64,8 +64,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
   }, []);
 
   // ── Detecção de breakpoint mobile (< 768px) ────────────────────────────────
-  // useState com função lazy: roda só no cliente (typeof window guard para SSR),
-  // sem setState dentro do corpo do effect — evita o aviso react-hooks/set-state-in-effect.
   const [isMobile, setIsMobile] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(max-width: 767px)").matches;
@@ -104,16 +102,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
   } = useLivro({ racasFiltradas, todasRacas: racas, regioes });
 
   // ── Navegação mobile (1 a 1, sem useEffect) ────────────────────────────────
-  //
-  // O useLivro gerencia `currentPage` internamente com setState privado,
-  // por isso não podemos chamar setCurrentPage diretamente.
-  // A estratégia: usamos um estado espelho APENAS para o mobile que controla
-  // qual índice dentro do bloco de 2 páginas do hook está visível.
-  //
-  // Mais simples e sem cascading renders: mantemos um offset local (0 ou 1)
-  // que indica se estamos na página "esquerda" ou "direita" do par atual.
-  // Quando o offset avança além do par, delegamos ao hook para avançar o bloco.
-
   const [mobileOffset, setMobileOffset] = useState<0 | 1>(0);
 
   // Índice real da raça exibida no mobile
@@ -125,11 +113,14 @@ export default function Livro({ racas, regioes }: LivroProps) {
 
   const onAvancarMobile = useCallback(() => {
     if (!mobilePodAvancar) return;
-    playSound("/sounds/PaginaFlip.mp3", 0.45);
+
     if (mobileOffset === 0 && racasFiltradas[currentPage + 1] !== undefined) {
+      // Toca apenas aqui, pois estamos indo da esquerda para a direita na MESMA folha
+      playSound("/sounds/PaginaFlip.mp3", 0.45);
       setMobileOffset(1);
       limparNota();
     } else {
+      // Não toca aqui, deixa o som do useLivro/avancarPagina() agir na troca de folha física
       setMobileOffset(0);
       avancarPagina();
     }
@@ -144,11 +135,14 @@ export default function Livro({ racas, regioes }: LivroProps) {
 
   const onVoltarMobile = useCallback(() => {
     if (!mobilePodVoltar) return;
-    playSound("/sounds/PaginaFlip.mp3", 0.45);
+
     if (mobileOffset === 1) {
+      // Toca apenas aqui, pois estamos voltando da direita para a esquerda na MESMA folha
+      playSound("/sounds/PaginaFlip.mp3", 0.45);
       setMobileOffset(0);
       limparNota();
     } else {
+      // Não toca aqui, deixa o som do useLivro/voltarPagina() agir na troca de folha física
       const blocoAnteriorTemDois =
         racasFiltradas[currentPage - 1] !== undefined;
       setMobileOffset(blocoAnteriorTemDois ? 1 : 0);
