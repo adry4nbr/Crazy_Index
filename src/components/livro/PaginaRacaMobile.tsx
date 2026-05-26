@@ -20,6 +20,7 @@ type PaginaRacaMobileProps = {
   ) => void;
   getNomeRaca: (id: string) => string;
   getNomeRegiao: (id: string) => string;
+  onItemClick?: (item: string) => void;
 };
 
 export function PaginaRacaMobile({
@@ -30,12 +31,11 @@ export function PaginaRacaMobile({
   onAlternarNota,
   getNomeRaca,
   getNomeRegiao,
+  onItemClick,
 }: PaginaRacaMobileProps) {
-  // Lógica Ímpar (Esquerda) / Par (Direita)
   const isRightPage = pageNum % 2 === 0;
   const side = isRightPage ? "right" : "left";
 
-  // ── Página arrancada ────────────────────────────────────────────────────────
   if (!raca) {
     return (
       <div
@@ -54,7 +54,6 @@ export function PaginaRacaMobile({
     );
   }
 
-  // ── CONSTANTES CORRIGIDAS (Intocáveis) ──────────────────────────────────────
   const fraquezas = (raca.fraquezas as Record<string, string>) || {};
   const aliancas = raca.aliancas_ids || [];
   const inimigos = raca.inimigos_ids || [];
@@ -62,18 +61,15 @@ export function PaginaRacaMobile({
   const regioes = raca.regioes_ids || [];
 
   return (
-    // Espaçamento embutido afasta o conteúdo da lombada tridimensional do meio
     <div
       className={`font-['IM_Fell_English'] select-none relative flex flex-col flex-1 h-full ${
         isRightPage ? "pl-8 pr-4" : "pl-4 pr-8"
       }`}
     >
-      {/* Manchas de envelhecimento — decorativas, não afetam layout */}
       <div className="absolute top-0 left-0 w-64 h-48 bg-radial-[rgba(65,35,10,0.25)_0%,transparent_70%] pointer-events-none mix-blend-multiply z-0" />
       <div className="absolute bottom-0 right-0 w-44 h-36 bg-radial-[rgba(55,25,5,0.30)_0%,transparent_60%] pointer-events-none mix-blend-multiply z-0" />
 
       <div className="relative z-10 flex flex-col flex-1 h-full">
-        {/* ── Cabeçalho ──────────────────────────────────────────────────── */}
         <header className="text-center mb-3 shrink-0">
           <span className="text-[11px] uppercase tracking-[3px] text-[#4a321a] font-bold block">
             ~ Origem: {raca.origem || "Sem Dados"} ~
@@ -88,7 +84,6 @@ export function PaginaRacaMobile({
           </div>
         </header>
 
-        {/* ── Imagem + Descrição ─────────────────────────────────────────── */}
         <div className="flex gap-3 items-start mt-1 shrink-0">
           {raca.imagem_url ? (
             <Image
@@ -112,13 +107,10 @@ export function PaginaRacaMobile({
           </p>
         </div>
 
-        {/* ── Divisor ────────────────────────────────────────────────────── */}
         <div className="w-full h-px bg-[#4a321a]/25 my-4 shrink-0" />
 
-        {/* ── ESPAÇADOR: Empurra as informações para o fundo ─────────────── */}
         <div className="flex-1 min-h-4" />
 
-        {/* ── Infos Inferiores (Fixas na base) ───────────────────────────── */}
         <div className="relative shrink-0 flex flex-col gap-2">
           <div className="space-y-2 text-[14px] text-[#170a03]">
             <LinhaInfo
@@ -162,14 +154,16 @@ export function PaginaRacaMobile({
           </div>
 
           {activeNote?.side === side && (
-            <PapelMagico title={activeNote.title} items={activeNote.items} />
+            <PapelMagico
+              title={activeNote.title}
+              items={activeNote.items}
+              onItemClick={onItemClick}
+            />
           )}
 
-          {/* Fraquezas logo abaixo dos atributos */}
           <SecaoFraquezas fraquezas={fraquezas} />
         </div>
 
-        {/* ── Número de página ──────────────────────────────────────────── */}
         <div className="mt-4 shrink-0 font-['Cinzel'] text-xs font-bold text-[#4a321a]/80 text-center pt-2 border-t border-[#4a321a]/20 tracking-widest">
           — {pageNum} / {totalPaginas} —
         </div>

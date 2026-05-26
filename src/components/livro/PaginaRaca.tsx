@@ -19,6 +19,7 @@ type PaginaRacaProps = {
   ) => void;
   getNomeRaca: (id: string) => string;
   getNomeRegiao: (id: string) => string;
+  onItemClick?: (item: string) => void;
 };
 
 // Rasgo de garra — SVG inline com marcas de arranhão e buracos na página
@@ -59,6 +60,7 @@ export function PaginaRaca({
   onAlternarNota,
   getNomeRaca,
   getNomeRegiao,
+  onItemClick,
 }: PaginaRacaProps) {
   const isLeft = side === "left";
 
@@ -180,7 +182,11 @@ export function PaginaRaca({
           </div>
 
           {activeNote?.side === side && (
-            <PapelMagico title={activeNote.title} items={activeNote.items} />
+            <PapelMagico
+              title={activeNote.title}
+              items={activeNote.items}
+              onItemClick={onItemClick} // 3. REPASSANDO A NAVEGAÇÃO
+            />
           )}
         </div>
 

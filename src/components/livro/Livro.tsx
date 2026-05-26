@@ -53,7 +53,6 @@ function PaginaVazia() {
 }
 
 export default function Livro({ racas, regioes }: LivroProps) {
-  // ── Preload de sons ────────────────────────────────────────────────────────
   useEffect(() => {
     preloadSound("/sounds/BookOpen.wav");
     preloadSound("/sounds/BookClose.wav");
@@ -63,7 +62,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
     preloadSound("/sounds/PapelMagicoOpen.mp3");
   }, []);
 
-  // ── Detecção de breakpoint mobile (< 768px) ────────────────────────────────
   const [isMobile, setIsMobile] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(max-width: 767px)").matches;
@@ -76,7 +74,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // ── Hooks de dados ─────────────────────────────────────────────────────────
   const { filtros, racasFiltradas, temFiltros, set, toggle, limpar } =
     useFiltros(racas);
 
@@ -90,6 +87,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
     racaDireita,
     podVoltar,
     podAvancar,
+    irParaPagina, // Usa o novo método do hook
     abrirLivro,
     fecharLivro,
     avancarPagina,
@@ -101,26 +99,42 @@ export default function Livro({ racas, regioes }: LivroProps) {
     getNomeRegiao,
   } = useLivro({ racasFiltradas, todasRacas: racas, regioes });
 
-  // ── Navegação mobile (1 a 1, sem useEffect) ────────────────────────────────
   const [mobileOffset, setMobileOffset] = useState<0 | 1>(0);
 
-  // Índice real da raça exibida no mobile
-  const mobilePageIndex = currentPage + mobileOffset;
+  // A função mestre de clique que controla Desktop e Mobile
+  const handleItemClick = useCallback(
+    (nomeRaca: string) => {
+      let index = racasFiltradas.findIndex((r) => r.nome === nomeRaca);
 
+      // Se não achou na busca atual, limpa os filtros para procurar na lista toda
+      if (index === -1 && racas.some((r) => r.nome === nomeRaca)) {
+        limpar();
+        index = racas.findIndex((r) => r.nome === nomeRaca);
+      }
+
+      if (index !== -1) {
+        irParaPagina(index);
+        if (isMobile) {
+          // Calcula a folha certa para o mobile e abre nela
+          setMobileOffset(index % 2 !== 0 ? 1 : 0);
+        }
+      }
+    },
+    [racasFiltradas, racas, limpar, irParaPagina, isMobile],
+  );
+
+  const mobilePageIndex = currentPage + mobileOffset;
   const mobilePodVoltar = mobilePageIndex > 0 && !direcao && !fechando;
   const mobilePodAvancar =
     mobilePageIndex < racasFiltradas.length - 1 && !direcao && !fechando;
 
   const onAvancarMobile = useCallback(() => {
     if (!mobilePodAvancar) return;
-
     if (mobileOffset === 0 && racasFiltradas[currentPage + 1] !== undefined) {
-      // Toca apenas aqui, pois estamos indo da esquerda para a direita na MESMA folha
       playSound("/sounds/PaginaFlip.mp3", 0.45);
       setMobileOffset(1);
       limparNota();
     } else {
-      // Não toca aqui, deixa o som do useLivro/avancarPagina() agir na troca de folha física
       setMobileOffset(0);
       avancarPagina();
     }
@@ -135,14 +149,11 @@ export default function Livro({ racas, regioes }: LivroProps) {
 
   const onVoltarMobile = useCallback(() => {
     if (!mobilePodVoltar) return;
-
     if (mobileOffset === 1) {
-      // Toca apenas aqui, pois estamos voltando da direita para a esquerda na MESMA folha
       playSound("/sounds/PaginaFlip.mp3", 0.45);
       setMobileOffset(0);
       limparNota();
     } else {
-      // Não toca aqui, deixa o som do useLivro/voltarPagina() agir na troca de folha física
       const blocoAnteriorTemDois =
         racasFiltradas[currentPage - 1] !== undefined;
       setMobileOffset(blocoAnteriorTemDois ? 1 : 0);
@@ -157,48 +168,40 @@ export default function Livro({ racas, regioes }: LivroProps) {
     limparNota,
   ]);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   if (!isOpen) {
     return <CapaGrimorio onOpen={abrirLivro} />;
   }
 
-  // ── Versão Mobile ──────────────────────────────────────────────────────────
   if (isMobile) {
     return (
       <LivroMobile
         key={racasFiltradas.length}
-        // Dados
         racasFiltradas={racasFiltradas}
         todasRacas={racas}
         regioes={regioes}
-        // Estado do livro
         currentPage={mobilePageIndex}
         activeNote={activeNote}
         podVoltar={mobilePodVoltar}
         podAvancar={mobilePodAvancar}
-        // Ações do livro
         fechando={fechando}
         fecharLivro={fecharLivro}
         fecharNota={fecharNota}
         alternarNota={alternarNota}
         getNomeRaca={getNomeRaca}
         getNomeRegiao={getNomeRegiao}
-        // Navegação mobile (1 a 1)
         onAvancar={onAvancarMobile}
         onVoltar={onVoltarMobile}
-        // Filtros
         filtros={filtros}
         temFiltros={temFiltros}
         totalEncontrado={racasFiltradas.length}
         onToggle={toggle}
         onBusca={(valor) => set("busca", valor)}
         onLimpar={limpar}
+        onItemClick={handleItemClick} // 🔴 Aqui o Fio foi passado pro Mobile!
       />
     );
   }
 
-  // ── Versão Desktop (código original, intacto) ──────────────────────────────
   return (
     <div
       onClick={fecharNota}
@@ -216,13 +219,11 @@ export default function Livro({ racas, regioes }: LivroProps) {
           regioes={regioes}
         />
 
-        {/* Livro — livro-aberto + fechando dispara book-close */}
         <div
           className={`livro-aberto w-212.5 h-160 flex relative border-12 border-[#1a0e0a] shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden bg-[#cdb394] ${fechando ? "fechando" : ""}`}
         >
           <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(50,25,10,0.6)] pointer-events-none z-20" />
 
-          {/* Páginas que viram ao fechar */}
           {fechando && (
             <>
               <div className="pagina-fechar-esq fechando-ativa">
@@ -236,6 +237,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
                       onAlternarNota={alternarNota}
                       getNomeRaca={getNomeRaca}
                       getNomeRegiao={getNomeRegiao}
+                      onItemClick={handleItemClick}
                     />
                   )}
                 </div>
@@ -251,6 +253,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
                       onAlternarNota={alternarNota}
                       getNomeRaca={getNomeRaca}
                       getNomeRegiao={getNomeRegiao}
+                      onItemClick={handleItemClick}
                     />
                   )}
                 </div>
@@ -258,7 +261,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
             </>
           )}
 
-          {/* Overlay de flip ao navegar */}
           {direcao && (
             <div
               className={`pagina-flip-overlay ${
@@ -285,7 +287,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
             </div>
           )}
 
-          {/* Página Esquerda */}
           <div className="w-1/2 h-full relative overflow-hidden">
             <div className="p-8 pr-10 pb-6 h-full">
               {racasFiltradas.length === 0 ? (
@@ -299,16 +300,15 @@ export default function Livro({ racas, regioes }: LivroProps) {
                   onAlternarNota={alternarNota}
                   getNomeRaca={getNomeRaca}
                   getNomeRegiao={getNomeRegiao}
+                  onItemClick={handleItemClick} // Já estava aqui, mas usa o novo hook
                 />
               )}
             </div>
           </div>
 
-          {/* Dobra Central */}
           <div className="absolute left-1/2 top-0 bottom-0 w-10 -ml-5 bg-linear-to-r from-[#120703]/75 via-[#381d0d]/25 to-[#120703]/75 z-30 pointer-events-none" />
           <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-black/85 z-30 shadow-[0_0_10px_rgba(0,0,0,0.9)]" />
 
-          {/* Página Direita */}
           <div className="w-1/2 h-full relative overflow-hidden">
             <div className="p-8 pl-10 pb-6 h-full">
               {racasFiltradas.length === 0 ? (
@@ -325,6 +325,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
                   onAlternarNota={alternarNota}
                   getNomeRaca={getNomeRaca}
                   getNomeRegiao={getNomeRegiao}
+                  onItemClick={handleItemClick} // Já estava aqui, mas usa o novo hook
                 />
               )}
             </div>

@@ -76,6 +76,18 @@ export function useLivro({
     }, 350);
   }, [paginaSegura, direcao]);
 
+  // Função nova que resolve o teletransporte
+  const irParaPagina = useCallback(
+    (index: number) => {
+      if (fechando) return;
+      const paginaPar = index % 2 !== 0 ? index - 1 : index;
+      playSound("/sounds/PaginaFlip.mp3", 0.45);
+      setActiveNote(null);
+      setCurrentPage(Math.max(0, paginaPar));
+    },
+    [fechando],
+  );
+
   const abrirLivro = () => {
     setCurrentPage(0);
     setFechando(false);
@@ -119,8 +131,10 @@ export function useLivro({
     alternarNota,
     avancarPagina,
     voltarPagina,
+    irParaPagina,
     limparNota: () => setActiveNote(null),
     getNomeRaca,
     getNomeRegiao,
+    setCurrentPage,
   };
 }

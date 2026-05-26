@@ -3,9 +3,14 @@
 type PapelMagicoProps = {
   title: string;
   items: string[];
+  onItemClick?: (item: string) => void;
 };
 
-export function PapelMagico({ title, items }: PapelMagicoProps) {
+export function PapelMagico({ title, items, onItemClick }: PapelMagicoProps) {
+  // Libera o clique APENAS para as categorias que fazem sentido ter link
+  const permitirClique =
+    title === "Registros de Aliança" || title === "Inimizades Antigas";
+
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -19,20 +24,31 @@ export function PapelMagico({ title, items }: PapelMagicoProps) {
       </h5>
 
       <div className="flex flex-col space-y-1 text-[13.5px] leading-tight font-medium italic text-[#301c0f]">
-        {items.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex items-start gap-1.5 py-0.5 border-b border-[#4a321a]/5 last:border-0 cursor-pointer hover:text-[#a42b2b] hover:underline transition-all"
-            onClick={() =>
-              alert(`No futuro, isso vai te levar para a página de: ${item}`)
-            }
-          >
-            <span className="text-[#a42b2b] text-[10px] mt-0.5 shrink-0">
-              ✧
-            </span>
-            <span>{item}</span>
-          </div>
-        ))}
+        {items.map((item, idx) => {
+          // Verifica se é uma categoria clicável E se a função foi passada pelo pai
+          const isClickable = permitirClique && !!onItemClick;
+
+          return (
+            <div
+              key={idx}
+              className={`flex items-start gap-1.5 py-0.5 border-b border-[#4a321a]/5 last:border-0 transition-all ${
+                isClickable
+                  ? "cursor-pointer hover:text-[#a42b2b] hover:underline"
+                  : "cursor-default"
+              }`}
+              onClick={() => {
+                if (isClickable && onItemClick) {
+                  onItemClick(item);
+                }
+              }}
+            >
+              <span className="text-[#a42b2b] text-[10px] mt-0.5 shrink-0">
+                ✧
+              </span>
+              <span>{item}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
