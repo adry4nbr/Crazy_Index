@@ -175,7 +175,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
   if (isMobile) {
     return (
       <LivroMobile
-        key={racasFiltradas.length}
         racasFiltradas={racasFiltradas}
         todasRacas={racas}
         regioes={regioes}

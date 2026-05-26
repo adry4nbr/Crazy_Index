@@ -84,7 +84,10 @@ function ChipMobile({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       className={`text-[12px] px-3 py-1 rounded-full border transition-all font-['IM_Fell_English'] whitespace-nowrap ${
         ativo
           ? "bg-[#a42b2b]/25 border-[#a42b2b] text-[#a42b2b] font-bold"
@@ -148,12 +151,14 @@ function GavetaFiltros({
         }`}
         onClick={onFechar}
       />
+
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 bg-[#120a06] border-t border-[#3a2518] rounded-t-2xl transition-transform duration-300 ease-out flex flex-col`}
         style={{
           transform: aberta ? "translateY(0)" : "translateY(100%)",
           maxHeight: "80vh",
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-[#3a2518]" />
@@ -163,7 +168,10 @@ function GavetaFiltros({
             Filtros do Grimório
           </h2>
           <button
-            onClick={onFechar}
+            onClick={(e) => {
+              e.stopPropagation();
+              onFechar();
+            }}
             className="text-[#8b6a4a] hover:text-[#cdb394] transition-colors text-lg leading-none"
           >
             ✕
@@ -184,7 +192,10 @@ function GavetaFiltros({
             </span>
             {temFiltros && (
               <button
-                onClick={onLimpar}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLimpar();
+                }}
                 className="text-[12px] text-[#a42b2b] hover:text-[#cc3333] font-['Cinzel'] transition-colors"
               >
                 Limpar filtros
