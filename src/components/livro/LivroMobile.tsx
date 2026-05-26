@@ -431,7 +431,6 @@ export function LivroMobile({
                 : "right-0 bg-linear-to-l from-black/85 via-black/30 to-transparent"
             }`}
           />
-
           <div
             className={`absolute top-0 bottom-0 w-px bg-black/90 z-30 shadow-[0_0_6px_rgba(0,0,0,0.8)] ${
               isRightPage ? "left-0" : "right-0"
