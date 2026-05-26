@@ -369,11 +369,9 @@ npm run dev
 
 # 🌍 Deploy
 
-🔗 Deploy em produção:
+🔗 https://crazyindex.vercel.app/
 
-```bash
-Em breve...
-```
+---
 
 ---
 

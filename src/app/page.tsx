@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Livro from "@/components/livro/Livro";
 import { getRacas, getRegioes } from "@/lib/data";
 
