@@ -1,14 +1,15 @@
 "use client";
 
+import { useEffect, useState, useCallback } from "react";
 import { useLivro } from "./hooks/useLivro";
 import { useFiltros } from "./hooks/useFiltros";
 import { CapaGrimorio } from "./CapaGrimorio";
 import { PaginaRaca } from "./PaginaRaca";
 import { ControlesNavegacao } from "./ControlesNavegacao";
 import { BarraFiltros } from "./BarraFiltros";
+import { LivroMobile } from "./LivroMobile";
 import { Raca, Regiao } from "@/data/mockData";
-import { useEffect } from "react"; // 1. Garanta que o useEffect está importado
-import { preloadSound } from "@/utils/playSound";
+import { preloadSound, playSound } from "@/utils/playSound";
 
 interface LivroProps {
   racas: Raca[];
@@ -52,6 +53,7 @@ function PaginaVazia() {
 }
 
 export default function Livro({ racas, regioes }: LivroProps) {
+  // ── Preload de sons ────────────────────────────────────────────────────────
   useEffect(() => {
     preloadSound("/sounds/BookOpen.wav");
     preloadSound("/sounds/BookClose.wav");
@@ -60,6 +62,23 @@ export default function Livro({ racas, regioes }: LivroProps) {
     preloadSound("/sounds/PapelMagicoClose.mp3");
     preloadSound("/sounds/PapelMagicoOpen.mp3");
   }, []);
+
+  // ── Detecção de breakpoint mobile (< 768px) ────────────────────────────────
+  // useState com função lazy: roda só no cliente (typeof window guard para SSR),
+  // sem setState dentro do corpo do effect — evita o aviso react-hooks/set-state-in-effect.
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 767px)").matches;
+  });
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // ── Hooks de dados ─────────────────────────────────────────────────────────
   const { filtros, racasFiltradas, temFiltros, set, toggle, limpar } =
     useFiltros(racas);
 
@@ -79,14 +98,112 @@ export default function Livro({ racas, regioes }: LivroProps) {
     voltarPagina,
     fecharNota,
     alternarNota,
+    limparNota,
     getNomeRaca,
     getNomeRegiao,
   } = useLivro({ racasFiltradas, todasRacas: racas, regioes });
+
+  // ── Navegação mobile (1 a 1, sem useEffect) ────────────────────────────────
+  //
+  // O useLivro gerencia `currentPage` internamente com setState privado,
+  // por isso não podemos chamar setCurrentPage diretamente.
+  // A estratégia: usamos um estado espelho APENAS para o mobile que controla
+  // qual índice dentro do bloco de 2 páginas do hook está visível.
+  //
+  // Mais simples e sem cascading renders: mantemos um offset local (0 ou 1)
+  // que indica se estamos na página "esquerda" ou "direita" do par atual.
+  // Quando o offset avança além do par, delegamos ao hook para avançar o bloco.
+
+  const [mobileOffset, setMobileOffset] = useState<0 | 1>(0);
+
+  // Índice real da raça exibida no mobile
+  const mobilePageIndex = currentPage + mobileOffset;
+
+  const mobilePodVoltar = mobilePageIndex > 0 && !direcao && !fechando;
+  const mobilePodAvancar =
+    mobilePageIndex < racasFiltradas.length - 1 && !direcao && !fechando;
+
+  const onAvancarMobile = useCallback(() => {
+    if (!mobilePodAvancar) return;
+    playSound("/sounds/PaginaFlip.mp3", 0.45);
+    if (mobileOffset === 0 && racasFiltradas[currentPage + 1] !== undefined) {
+      setMobileOffset(1);
+      limparNota();
+    } else {
+      setMobileOffset(0);
+      avancarPagina();
+    }
+  }, [
+    mobilePodAvancar,
+    mobileOffset,
+    currentPage,
+    racasFiltradas,
+    avancarPagina,
+    limparNota,
+  ]);
+
+  const onVoltarMobile = useCallback(() => {
+    if (!mobilePodVoltar) return;
+    playSound("/sounds/PaginaFlip.mp3", 0.45);
+    if (mobileOffset === 1) {
+      setMobileOffset(0);
+      limparNota();
+    } else {
+      const blocoAnteriorTemDois =
+        racasFiltradas[currentPage - 1] !== undefined;
+      setMobileOffset(blocoAnteriorTemDois ? 1 : 0);
+      voltarPagina();
+    }
+  }, [
+    mobilePodVoltar,
+    mobileOffset,
+    currentPage,
+    racasFiltradas,
+    voltarPagina,
+    limparNota,
+  ]);
+
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   if (!isOpen) {
     return <CapaGrimorio onOpen={abrirLivro} />;
   }
 
+  // ── Versão Mobile ──────────────────────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <LivroMobile
+        key={racasFiltradas.length}
+        // Dados
+        racasFiltradas={racasFiltradas}
+        todasRacas={racas}
+        regioes={regioes}
+        // Estado do livro
+        currentPage={mobilePageIndex}
+        activeNote={activeNote}
+        podVoltar={mobilePodVoltar}
+        podAvancar={mobilePodAvancar}
+        // Ações do livro
+        fecharLivro={fecharLivro}
+        fecharNota={fecharNota}
+        alternarNota={alternarNota}
+        getNomeRaca={getNomeRaca}
+        getNomeRegiao={getNomeRegiao}
+        // Navegação mobile (1 a 1)
+        onAvancar={onAvancarMobile}
+        onVoltar={onVoltarMobile}
+        // Filtros
+        filtros={filtros}
+        temFiltros={temFiltros}
+        totalEncontrado={racasFiltradas.length}
+        onToggle={toggle}
+        onBusca={(valor) => set("busca", valor)}
+        onLimpar={limpar}
+      />
+    );
+  }
+
+  // ── Versão Desktop (código original, intacto) ──────────────────────────────
   return (
     <div
       onClick={fecharNota}
@@ -113,7 +230,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
           {/* Páginas que viram ao fechar */}
           {fechando && (
             <>
-              {/* Página esquerda fechando */}
               <div className="pagina-fechar-esq fechando-ativa">
                 <div className="p-8 pr-10 pb-6 h-full">
                   {racaEsquerda && (
@@ -129,10 +245,8 @@ export default function Livro({ racas, regioes }: LivroProps) {
                   )}
                 </div>
               </div>
-
-              {/* Página direita fechando */}
               <div className="pagina-fechar-dir fechando-ativa">
-                <div className=" p-8 pl-10 pb-6 h-full">
+                <div className="p-8 pl-10 pb-6 h-full">
                   {racaDireita && (
                     <PaginaRaca
                       raca={racaDireita}
