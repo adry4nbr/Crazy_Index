@@ -70,21 +70,21 @@ export function PaginaRacaMobile({
       <div className="absolute bottom-0 right-0 w-44 h-36 bg-radial-[rgba(55,25,5,0.30)_0%,transparent_60%] pointer-events-none mix-blend-multiply z-0" />
 
       <div className="relative z-10 flex flex-col flex-1 h-full">
-        <header className="text-center mb-3 shrink-0">
+        <header className="text-center mb-2 shrink-0">
           <span className="text-[11px] uppercase tracking-[3px] text-[#4a321a] font-bold block">
             ~ Origem: {raca.origem || "Sem Dados"} ~
           </span>
           <h2 className="font-['Cinzel'] text-2xl font-extrabold text-[#210f05] tracking-wide leading-tight mt-0.5">
             {raca.nome}
           </h2>
-          <div className="w-full h-px bg-linear-to-r from-transparent via-[#4a321a]/40 to-transparent relative mt-2">
+          <div className="w-full h-px bg-linear-to-r from-transparent via-[#4a321a]/40 to-transparent relative">
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-[#4a321a] bg-[#cdb394] px-2">
               ✧
             </span>
           </div>
         </header>
 
-        <div className="flex gap-3 items-start mt-1 shrink-0">
+        <div className="flex gap-3 items-start shrink-0">
           {raca.imagem_url ? (
             <Image
               src={raca.imagem_url}
@@ -94,20 +94,20 @@ export function PaginaRacaMobile({
               className="shrink-0 border border-[#4a321a]/70 rounded shadow-sm object-cover"
             />
           ) : (
-            <div className="w-28 h-36 shrink-0 border border-[#4a321a]/70 bg-stone-950/15 relative flex flex-col items-center justify-center rounded shadow-sm">
+            <div className="w-28 h-32 shrink-0 border border-[#4a321a]/70 bg-stone-950/15 relative flex flex-col items-center justify-center rounded shadow-sm">
               <div className="absolute inset-0.5 border border-[#4a321a]/20 border-dashed" />
               <span className="text-[10px] tracking-widest font-bold text-[#4a321a]/80 uppercase font-['Cinzel']">
                 Gravura
               </span>
             </div>
           )}
-          <p className="flex-1 text-[14px] leading-relaxed text-[#170a03] italic text-justify">
+          <p className="flex-1 text-[11px] leading-relaxed text-[#170a03] italic ">
             {raca.descricao ||
               "Nenhum relato escrito foi encontrado sobre esta criatura nos arquivos antigos."}
           </p>
         </div>
 
-        <div className="w-full h-px bg-[#4a321a]/25 my-4 shrink-0" />
+        <div className="w-full bg-[#4a321a]/25 shrink-0" />
 
         <div className="flex-1 min-h-4" />
 
@@ -164,7 +164,7 @@ export function PaginaRacaMobile({
           <SecaoFraquezas fraquezas={fraquezas} />
         </div>
 
-        <div className="mt-4 shrink-0 font-['Cinzel'] text-xs font-bold text-[#4a321a]/80 text-center pt-2 border-t border-[#4a321a]/20 tracking-widest">
+        <div className="shrink-0 font-['Cinzel'] text-xs font-bold text-[#4a321a]/80 text-center pt-2 border-t border-[#4a321a]/20 tracking-widest">
           — {pageNum} / {totalPaginas} —
         </div>
       </div>

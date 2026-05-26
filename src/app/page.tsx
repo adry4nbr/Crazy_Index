@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 5;
 
 import Livro from "@/components/livro/Livro";
 import { getRacas, getRegioes } from "@/lib/data";
