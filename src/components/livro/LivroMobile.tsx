@@ -60,6 +60,7 @@ type LivroMobileProps = {
   podAvancar: boolean;
 
   // Ações de navegação (vem do useLivro)
+  fechando: boolean;
   fecharLivro: () => void;
   fecharNota: () => void;
   alternarNota: (
@@ -329,6 +330,7 @@ export function LivroMobile({
   activeNote,
   podVoltar,
   podAvancar,
+  fechando,
   fecharLivro,
   fecharNota,
   alternarNota,
@@ -417,11 +419,11 @@ export function LivroMobile({
       <main className="flex-1 bg-[#0d0705] p-3 flex items-center justify-center overflow-hidden">
         {/* CAPA DO LIVRO */}
         <div
-          className={`w-full max-w-107.5 h-full max-h-200 bg-[#1a0e0a] border-2 border-[#090504] shadow-[0_12px_35px_rgba(0,0,0,0.9)] relative p-1 sm:p-2 transition-all duration-300 flex flex-col ${
+          className={`w-full max-w-107.5 h-full max-h-200 bg-[#1a0e0a] border-2 border-[#090504] shadow-[0_12px_35px_rgba(0,0,0,0.9)] relative p-1 sm:p-2 flex flex-col ${
             isRightPage
               ? "rounded-r-2xl rounded-l-sm"
               : "rounded-l-2xl rounded-r-sm"
-          }`}
+          } ${fechando ? (isRightPage ? "mobile-fechar-dir" : "mobile-fechar-esq") : ""}`}
         >
           {/* VINCO / LOMBADA DO LIVRO */}
           <div

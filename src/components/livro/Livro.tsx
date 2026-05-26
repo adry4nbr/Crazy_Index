@@ -184,6 +184,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
         podVoltar={mobilePodVoltar}
         podAvancar={mobilePodAvancar}
         // Ações do livro
+        fechando={fechando}
         fecharLivro={fecharLivro}
         fecharNota={fecharNota}
         alternarNota={alternarNota}
@@ -340,14 +341,8 @@ export default function Livro({ racas, regioes }: LivroProps) {
       <ControlesNavegacao
         podVoltar={podVoltar}
         podAvancar={podAvancar}
-        onVoltar={() => {
-          playSound("/sounds/PaginaFlip.mp3", 0.45);
-          voltarPagina();
-        }}
-        onAvancar={() => {
-          playSound("/sounds/PaginaFlip.mp3", 0.45);
-          avancarPagina();
-        }}
+        onVoltar={voltarPagina}
+        onAvancar={avancarPagina}
         onFechar={fecharLivro}
       />
     </div>
