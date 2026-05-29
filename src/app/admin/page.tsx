@@ -1,3 +1,5 @@
+export const revalidate = 5;
+
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Raca, Regiao } from "@/data/mockData";
@@ -49,7 +51,7 @@ export default async function AdminPage() {
             </div>
           ) : (
             // max-h + overflow-y: scroll aparece automaticamente a partir de ~8 itens
-            <ul className="divide-y divide-stone-100 max-h-[420px] overflow-y-auto">
+            <ul className="divide-y divide-stone-100 max-h-105 overflow-y-auto">
               {racas.map((raca) => (
                 <li
                   key={raca.id}
@@ -114,8 +116,7 @@ export default async function AdminPage() {
               Nenhuma região cadastrada ainda.
             </div>
           ) : (
-            // max-h + overflow-y: scroll aparece a partir de ~6 itens
-            <ul className="divide-y divide-stone-100 max-h-[300px] overflow-y-auto">
+            <ul className="divide-y divide-stone-100 max-h-75 overflow-y-auto">
               {regioes.map((regiao) => (
                 <li
                   key={regiao.id}
