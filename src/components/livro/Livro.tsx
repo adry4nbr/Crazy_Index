@@ -87,7 +87,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
     racaDireita,
     podVoltar,
     podAvancar,
-    irParaPagina, // Usa o novo método do hook
+    irParaPagina,
     abrirLivro,
     fecharLivro,
     avancarPagina,
@@ -101,12 +101,9 @@ export default function Livro({ racas, regioes }: LivroProps) {
 
   const [mobileOffset, setMobileOffset] = useState<0 | 1>(0);
 
-  // A função mestre de clique que controla Desktop e Mobile
   const handleItemClick = useCallback(
     (nomeRaca: string) => {
       let index = racasFiltradas.findIndex((r) => r.nome === nomeRaca);
-
-      // Se não achou na busca atual, limpa os filtros para procurar na lista toda
       if (index === -1 && racas.some((r) => r.nome === nomeRaca)) {
         limpar();
         index = racas.findIndex((r) => r.nome === nomeRaca);
@@ -115,7 +112,6 @@ export default function Livro({ racas, regioes }: LivroProps) {
       if (index !== -1) {
         irParaPagina(index);
         if (isMobile) {
-          // Calcula a folha certa para o mobile e abre nela
           setMobileOffset(index % 2 !== 0 ? 1 : 0);
         }
       }
@@ -135,15 +131,17 @@ export default function Livro({ racas, regioes }: LivroProps) {
       setMobileOffset(1);
       limparNota();
     } else {
+      playSound("/sounds/PaginaFlip.mp3", 0.45);
       setMobileOffset(0);
-      avancarPagina();
+      irParaPagina(currentPage + 2);
+      limparNota();
     }
   }, [
     mobilePodAvancar,
     mobileOffset,
     currentPage,
     racasFiltradas,
-    avancarPagina,
+    irParaPagina,
     limparNota,
   ]);
 
@@ -156,15 +154,17 @@ export default function Livro({ racas, regioes }: LivroProps) {
     } else {
       const blocoAnteriorTemDois =
         racasFiltradas[currentPage - 1] !== undefined;
+      playSound("/sounds/PaginaFlip.mp3", 0.45);
       setMobileOffset(blocoAnteriorTemDois ? 1 : 0);
-      voltarPagina();
+      irParaPagina(currentPage - 2);
+      limparNota();
     }
   }, [
     mobilePodVoltar,
     mobileOffset,
     currentPage,
     racasFiltradas,
-    voltarPagina,
+    irParaPagina,
     limparNota,
   ]);
 
@@ -196,7 +196,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
         onToggle={toggle}
         onBusca={(valor) => set("busca", valor)}
         onLimpar={limpar}
-        onItemClick={handleItemClick} // 🔴 Aqui o Fio foi passado pro Mobile!
+        onItemClick={handleItemClick}
       />
     );
   }
@@ -299,7 +299,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
                   onAlternarNota={alternarNota}
                   getNomeRaca={getNomeRaca}
                   getNomeRegiao={getNomeRegiao}
-                  onItemClick={handleItemClick} // Já estava aqui, mas usa o novo hook
+                  onItemClick={handleItemClick}
                 />
               )}
             </div>
@@ -324,7 +324,7 @@ export default function Livro({ racas, regioes }: LivroProps) {
                   onAlternarNota={alternarNota}
                   getNomeRaca={getNomeRaca}
                   getNomeRegiao={getNomeRegiao}
-                  onItemClick={handleItemClick} // Já estava aqui, mas usa o novo hook
+                  onItemClick={handleItemClick}
                 />
               )}
             </div>
